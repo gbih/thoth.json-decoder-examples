@@ -1,0 +1,93 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj": {}
+  },
+  "projects": {
+    "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj",
+        "projectName": "App",
+        "projectPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj",
+        "packagesPath": "/Users/ih/.nuget/packages/",
+        "outputPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/NuGet.Config",
+          "/Users/ih/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "dependencies": {
+            "FSharp.Core": {
+              "target": "Package",
+              "version": "[4.6.2, )"
+            },
+            "Fable.Core": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Fable.Elmish.React": {
+              "target": "Package",
+              "version": "[3.0.1, )"
+            },
+            "Fable.Fetch": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Fable.Promise": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Microsoft.NETCore.App": {
+              "include": "None",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.0.0-preview7-27912-14, )",
+              "autoReferenced": true
+            },
+            "Thoth.Json": {
+              "target": "Package",
+              "version": "[3.3.0, )"
+            },
+            "Thoth.Json.Net": {
+              "target": "Package",
+              "version": "[3.5.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,661 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETCoreApp,Version=v3.0": {
+      "Fable.Browser.Blob/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Browser.Blob.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Browser.Blob.dll": {}
+        }
+      },
+      "Fable.Browser.Dom/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2",
+          "Fable.Browser.Blob": "1.0.0",
+          "Fable.Browser.Event": "1.0.0",
+          "Fable.Browser.WebStorage": "1.0.0",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Browser.Dom.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Browser.Dom.dll": {}
+        }
+      },
+      "Fable.Browser.Event/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Browser.Event.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Browser.Event.dll": {}
+        }
+      },
+      "Fable.Browser.WebStorage/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2",
+          "Fable.Browser.Event": "1.0.0",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Browser.WebStorage.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Browser.WebStorage.dll": {}
+        }
+      },
+      "Fable.Core/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Fable.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fable.Core.dll": {}
+        }
+      },
+      "Fable.Elmish/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Fable.Elmish.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fable.Elmish.dll": {}
+        }
+      },
+      "Fable.Elmish.React/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2",
+          "Fable.Core": "3.0.0",
+          "Fable.Elmish": "3.0.0",
+          "Fable.React": "5.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Fable.Elmish.React.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fable.Elmish.React.dll": {}
+        }
+      },
+      "Fable.Fetch/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2",
+          "Fable.Browser.Blob": "1.0.0",
+          "Fable.Core": "3.0.0",
+          "Fable.Promise": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Fable.Fetch.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fable.Fetch.dll": {}
+        }
+      },
+      "Fable.Promise/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.5.2",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Fable.Promise.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fable.Promise.dll": {}
+        }
+      },
+      "Fable.React/5.1.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2",
+          "Fable.Browser.Dom": "1.0.0",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Fable.React.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Fable.React.dll": {}
+        }
+      },
+      "FSharp.Core/4.6.2": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.6/FSharp.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.6/FSharp.Core.dll": {}
+        },
+        "resource": {
+          "lib/netstandard1.6/cs/FSharp.Core.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/netstandard1.6/de/FSharp.Core.resources.dll": {
+            "locale": "de"
+          },
+          "lib/netstandard1.6/en/FSharp.Core.resources.dll": {
+            "locale": "en"
+          },
+          "lib/netstandard1.6/es/FSharp.Core.resources.dll": {
+            "locale": "es"
+          },
+          "lib/netstandard1.6/fr/FSharp.Core.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/netstandard1.6/it/FSharp.Core.resources.dll": {
+            "locale": "it"
+          },
+          "lib/netstandard1.6/ja/FSharp.Core.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/netstandard1.6/ko/FSharp.Core.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/netstandard1.6/pl/FSharp.Core.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/netstandard1.6/pt-BR/FSharp.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/netstandard1.6/ru/FSharp.Core.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/netstandard1.6/tr/FSharp.Core.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/netstandard1.6/zh-Hans/FSharp.Core.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/netstandard1.6/zh-Hant/FSharp.Core.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "Microsoft.NETCore.App/3.0.0-preview7-27912-14": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.0.0-preview7.19362.9"
+        }
+      },
+      "Microsoft.NETCore.Platforms/3.0.0-preview7.19362.9": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/_._": {}
+        }
+      },
+      "Newtonsoft.Json/11.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Thoth.Json/3.3.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2",
+          "Fable.Core": "3.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Thoth.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Thoth.Json.dll": {}
+        }
+      },
+      "Thoth.Json.Net/3.5.1": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2",
+          "Fable.Core": "[3.0.0, 4.0.0)",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Thoth.Json.Net.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Thoth.Json.Net.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Fable.Browser.Blob/1.0.0": {
+      "sha512": "JqKAGjypePBNJrw/OAY5y00jo5v9bMXmwPKEju91otyUb7GKpCpBiW2YXVcbXK8GzaPFgyaKrMyH5KPJSN3pZg==",
+      "type": "package",
+      "path": "fable.browser.blob/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.browser.blob.1.0.0.nupkg.sha512",
+        "fable.browser.blob.nuspec",
+        "lib/netstandard2.0/Browser.Blob.dll",
+        "lib/netstandard2.0/Browser.Blob.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Browser.Dom/1.0.0": {
+      "sha512": "ZodpIKYuKnUnqN71Fi103mh0joFYrRPGwpYOrpbZ149PkVAW7DNKXgxad5lsi9df7vAe5+sBhhO71TPREZaWlw==",
+      "type": "package",
+      "path": "fable.browser.dom/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.browser.dom.1.0.0.nupkg.sha512",
+        "fable.browser.dom.nuspec",
+        "lib/netstandard2.0/Browser.Dom.dll",
+        "lib/netstandard2.0/Browser.Dom.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Browser.Event/1.0.0": {
+      "sha512": "T1bGrlRJ4A2fxOfAVPzJpxanR6lkzPgJroPdSN1IU5CLdKtvRakWmYq6QKqu4dz6ZV9Z3fIPTWLZkoGKEOEo3w==",
+      "type": "package",
+      "path": "fable.browser.event/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.browser.event.1.0.0.nupkg.sha512",
+        "fable.browser.event.nuspec",
+        "lib/netstandard2.0/Browser.Event.dll",
+        "lib/netstandard2.0/Browser.Event.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Browser.WebStorage/1.0.0": {
+      "sha512": "ZqnZKYkhPO+wmJPxQqtiwSc3zCC/mB37SPlVi4ZLiHoPFnra7SQ3qaRn4/ENYTeaVtVq92eVaYbTyAOnFn+GPA==",
+      "type": "package",
+      "path": "fable.browser.webstorage/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.browser.webstorage.1.0.0.nupkg.sha512",
+        "fable.browser.webstorage.nuspec",
+        "lib/netstandard2.0/Browser.WebStorage.dll",
+        "lib/netstandard2.0/Browser.WebStorage.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Core/3.0.0": {
+      "sha512": "pkCOWJKAkCk36f5+q4F3XqlfsgCJL6i2lTLl4ZZVDswn8rjXo21EBG/gJ296a88LVBkI5LL2VwxQYqGZncomJw==",
+      "type": "package",
+      "path": "fable.core/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.core.3.0.0.nupkg.sha512",
+        "fable.core.nuspec",
+        "lib/netstandard2.0/Fable.Core.dll",
+        "lib/netstandard2.0/Fable.Core.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Elmish/3.0.0": {
+      "sha512": "nmMTykzFTT6Jukh12d/3WGYiUpOdJodD2gUOiVIJAjKGg9ejgPj7k17xA/tvfauKEH5S28ZKdI9furmaFakpTg==",
+      "type": "package",
+      "path": "fable.elmish/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.elmish.3.0.0.nupkg.sha512",
+        "fable.elmish.nuspec",
+        "fable/Fable.Elmish.fsproj",
+        "fable/cmd.fs",
+        "fable/prelude.fs",
+        "fable/program.fs",
+        "fable/ring.fs",
+        "lib/netstandard2.0/Fable.Elmish.dll",
+        "lib/netstandard2.0/Fable.Elmish.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Elmish.React/3.0.1": {
+      "sha512": "4VG0iY/Qdz0DR1G9VkwsYY+iDcLMnTUYV0h8LoJluvgfoHUe1BFcyK+C01MU5e15SZzHtRMdTbNcEeG3kPBcrQ==",
+      "type": "package",
+      "path": "fable.elmish.react/3.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.elmish.react.3.0.1.nupkg.sha512",
+        "fable.elmish.react.nuspec",
+        "fable/Fable.Elmish.React.fsproj",
+        "fable/common.fs",
+        "fable/react-native.fs",
+        "fable/react.fs",
+        "lib/netstandard2.0/Fable.Elmish.React.dll",
+        "lib/netstandard2.0/Fable.Elmish.React.xml",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Fable.Fetch/2.0.0": {
+      "sha512": "aXsM2dUpCRIhYx8t9JCTcJcqJ2mrVS6kywzn87Qbh5bP1TgpoA7L0ONHBM0M0iWFwzZu4oYvVuavQr1f4Wy66w==",
+      "type": "package",
+      "path": "fable.fetch/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.fetch.2.0.0.nupkg.sha512",
+        "fable.fetch.nuspec",
+        "fable/Fable.Fetch.fsproj",
+        "fable/Fetch.fs",
+        "lib/netstandard2.0/Fable.Fetch.dll",
+        "lib/netstandard2.0/Fable.Fetch.xml"
+      ]
+    },
+    "Fable.Promise/2.0.0": {
+      "sha512": "rA9VD2uJTObnb8ghNmg/MTd8xMOJlVHmgNeKrP8SFMOP+tQ2tEDTf8xJ21HeR8ncuNxJP2CQkAfVlDxrLoHjZg==",
+      "type": "package",
+      "path": "fable.promise/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.promise.2.0.0.nupkg.sha512",
+        "fable.promise.nuspec",
+        "fable/Fable.Promise.fsproj",
+        "fable/Promise.fs",
+        "fable/PromiseImpl.fs",
+        "lib/netstandard2.0/Fable.Promise.dll",
+        "lib/netstandard2.0/Fable.Promise.xml"
+      ]
+    },
+    "Fable.React/5.1.0": {
+      "sha512": "00YrR93IeloD6ptcPxDCzNCYbiIXrVgUIDp7GWJMrBK+9ND5QCS353RoEL/HoCV6StUyDHXcQG9codnIakgVqg==",
+      "type": "package",
+      "path": "fable.react/5.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable.react.5.1.0.nupkg.sha512",
+        "fable.react.nuspec",
+        "fable/Fable.React.Extensions.fs",
+        "fable/Fable.React.FunctionComponent.fs",
+        "fable/Fable.React.Helpers.fs",
+        "fable/Fable.React.Hooks.fs",
+        "fable/Fable.React.Isomorphic.fs",
+        "fable/Fable.React.Props.fs",
+        "fable/Fable.React.ReactiveComponents.fs",
+        "fable/Fable.React.Standard.fs",
+        "fable/Fable.React.fs",
+        "fable/Fable.React.fsproj",
+        "fable/Fable.ReactDom.fs",
+        "fable/Fable.ReactServer.fs",
+        "lib/netstandard2.0/Fable.React.dll",
+        "lib/netstandard2.0/Fable.React.xml"
+      ]
+    },
+    "FSharp.Core/4.6.2": {
+      "sha512": "/waJ3a7u7MjFOGnXOfokbG1N1FH7VCmP3Fw1tJ8Q75kIj60LYBL3eYzab9hDimL5E21uhQ/1wf04M3dRAYemlw==",
+      "type": "package",
+      "path": "fsharp.core/4.6.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fsharp.core.4.6.2.nupkg.sha512",
+        "fsharp.core.nuspec",
+        "lib/net45/FSharp.Core.dll",
+        "lib/net45/FSharp.Core.optdata",
+        "lib/net45/FSharp.Core.sigdata",
+        "lib/net45/FSharp.Core.xml",
+        "lib/net45/cs/FSharp.Core.resources.dll",
+        "lib/net45/de/FSharp.Core.resources.dll",
+        "lib/net45/en/FSharp.Core.resources.dll",
+        "lib/net45/es/FSharp.Core.resources.dll",
+        "lib/net45/fr/FSharp.Core.resources.dll",
+        "lib/net45/it/FSharp.Core.resources.dll",
+        "lib/net45/ja/FSharp.Core.resources.dll",
+        "lib/net45/ko/FSharp.Core.resources.dll",
+        "lib/net45/pl/FSharp.Core.resources.dll",
+        "lib/net45/pt-BR/FSharp.Core.resources.dll",
+        "lib/net45/ru/FSharp.Core.resources.dll",
+        "lib/net45/tr/FSharp.Core.resources.dll",
+        "lib/net45/zh-Hans/FSharp.Core.resources.dll",
+        "lib/net45/zh-Hant/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/FSharp.Core.dll",
+        "lib/netstandard1.6/FSharp.Core.optdata",
+        "lib/netstandard1.6/FSharp.Core.sigdata",
+        "lib/netstandard1.6/FSharp.Core.xml",
+        "lib/netstandard1.6/cs/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/de/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/en/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/es/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/fr/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/it/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/ja/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/ko/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/pl/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/pt-BR/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/ru/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/tr/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/zh-Hans/FSharp.Core.resources.dll",
+        "lib/netstandard1.6/zh-Hant/FSharp.Core.resources.dll",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Microsoft.NETCore.App/3.0.0-preview7-27912-14": {
+      "sha512": "TNDdHAcfUqEaWXXJoCMUGZnsIP53jlShQV4Ccw8Nqbl8SWkkz1llq4ckfoRl7QrHoq328JhEyCSnPaaYHAB5Xg==",
+      "type": "package",
+      "path": "microsoft.netcore.app/3.0.0-preview7-27912-14",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "microsoft.netcore.app.3.0.0-preview7-27912-14.nupkg.sha512",
+        "microsoft.netcore.app.nuspec"
+      ]
+    },
+    "Microsoft.NETCore.Platforms/3.0.0-preview7.19362.9": {
+      "sha512": "gc5/X1m73JO8ETxOHC3IbgM7JRa7LPsSY+/lVs88YGwKn0QYuU568EmpC8yPk9UKaAOq+82PWG61vFcXdNfsvQ==",
+      "type": "package",
+      "path": "microsoft.netcore.platforms/3.0.0-preview7.19362.9",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netstandard1.0/_._",
+        "microsoft.netcore.platforms.3.0.0-preview7.19362.9.nupkg.sha512",
+        "microsoft.netcore.platforms.nuspec",
+        "paket-installmodel.cache",
+        "runtime.json",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Newtonsoft.Json/11.0.2": {
+      "sha512": "IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
+      "type": "package",
+      "path": "newtonsoft.json/11.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.11.0.2.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "paket-installmodel.cache"
+      ]
+    },
+    "Thoth.Json/3.3.0": {
+      "sha512": "dChq1mSRlvIIxmhKH9N0dvk5e9aBt0f+3rbGYbrEIpHNe3DcMrdlbftNmuMb7CcGlYCIW0DmVW2Fzn/fgtUSIg==",
+      "type": "package",
+      "path": "thoth.json/3.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fable/Decode.fs",
+        "fable/Encode.fs",
+        "fable/Extra.fs",
+        "fable/Thoth.Json.fsproj",
+        "fable/Types.fs",
+        "fable/obj/Debug/netstandard2.0/Thoth.Json.AssemblyInfo.fs",
+        "lib/netstandard2.0/Thoth.Json.dll",
+        "lib/netstandard2.0/Thoth.Json.xml",
+        "paket-installmodel.cache",
+        "thoth.json.3.3.0.nupkg.sha512",
+        "thoth.json.nuspec"
+      ]
+    },
+    "Thoth.Json.Net/3.5.1": {
+      "sha512": "52itsDG4y+csXPNfg00xk/sBNtvVZanAiYUlbXsOkwhJo0R54nXEj04eJAAbA7C6dEsg1Jl2ZHwj/d/zJwtTEg==",
+      "type": "package",
+      "path": "thoth.json.net/3.5.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net46/Thoth.Json.Net.dll",
+        "lib/net46/Thoth.Json.Net.xml",
+        "lib/netstandard2.0/Thoth.Json.Net.dll",
+        "lib/netstandard2.0/Thoth.Json.Net.xml",
+        "paket-installmodel.cache",
+        "thoth.json.net.3.5.1.nupkg.sha512",
+        "thoth.json.net.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETCoreApp,Version=v3.0": [
+      "FSharp.Core >= 4.6.2",
+      "Fable.Core >= 3.0.0",
+      "Fable.Elmish.React >= 3.0.1",
+      "Fable.Fetch >= 2.0.0",
+      "Fable.Promise >= 2.0.0",
+      "Microsoft.NETCore.App >= 3.0.0-preview7-27912-14",
+      "Thoth.Json >= 3.3.0",
+      "Thoth.Json.Net >= 3.5.1"
+    ]
+  },
+  "packageFolders": {
+    "/Users/ih/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj",
+      "projectName": "App",
+      "projectPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj",
+      "packagesPath": "/Users/ih/.nuget/packages/",
+      "outputPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/obj/",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/NuGet.Config",
+        "/Users/ih/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "netcoreapp3.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "projectReferences": {}
+        }
+      }
+    },
+    "frameworks": {
+      "netcoreapp3.0": {
+        "dependencies": {
+          "FSharp.Core": {
+            "target": "Package",
+            "version": "[4.6.2, )"
+          },
+          "Fable.Core": {
+            "target": "Package",
+            "version": "[3.0.0, )"
+          },
+          "Fable.Elmish.React": {
+            "target": "Package",
+            "version": "[3.0.1, )"
+          },
+          "Fable.Fetch": {
+            "target": "Package",
+            "version": "[2.0.0, )"
+          },
+          "Fable.Promise": {
+            "target": "Package",
+            "version": "[2.0.0, )"
+          },
+          "Microsoft.NETCore.App": {
+            "include": "None",
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[3.0.0-preview7-27912-14, )",
+            "autoReferenced": true
+          },
+          "Thoth.Json": {
+            "target": "Package",
+            "version": "[3.3.0, )"
+          },
+          "Thoth.Json.Net": {
+            "target": "Package",
+            "version": "[3.5.1, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        }
+      }
+    }
+  }
+}
