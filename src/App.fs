@@ -742,11 +742,189 @@ module ``optional works`` =
 
 //------------
 
+HR()
+
 // stop at testCase "optionalAt works" line 951
 
+module ``optionalAt works`` =
+    open Thoth.Json
+    let json = """{ "data" : { "name": "maxime", "age": 25, "something_undefined": null } }"""
+
+    let expectedValid = Ok(Some "maxime")
+
+    let actualValid =
+        Decode.fromString (Decode.optionalAt ["data"; "name"] Decode.string) json
+
+    match Decode.fromString (Decode.optionalAt ["data"; "name"] Decode.int) json with
+    | Error _ -> ()
+    | Ok _ -> failwith "Expected type error for `name` field"
+
+    let expectedMissingField = Ok None
+    let actualMissingField =
+        Decode.fromString (Decode.optionalAt [ "data"; "height"] Decode.int) json
+
+    let expectedUndefinedField = Ok(None)
+    let actualUndefinedField =
+        Decode.fromString (Decode.optionalAt ["data"; "something_undefined"] Decode.string) json
+
+``optionalAt works``.actualValid |> log
+``optionalAt works``.actualMissingField |> log
+``optionalAt works``.actualUndefinedField |> log
+
+HR()
+
+module ``combining field and option decoders works`` =
+    open Thoth.Json
+    let json = """{ "name": "maxime", "age": 25, "something_undefined": null }"""
+
+    let expectedValid = Ok(Some "maxime")
+    let actualValid =
+        Decode.fromString (Decode.field "name" (Decode.option Decode.string)) json
+
+``combining field and option decoders works``.actualValid |> log
+
+SECTION()
+
+// line 1094
+
+"Fancy decoding" |> log
+
+SECTION()
+
+module ``null works (test on an int)`` =
+    open Thoth.Json
+    let expected = Ok(20)
+    let actual =
+        Decode.fromString (Decode.nil 20) "null"
+
+``null works (test on an int)``.actual |> log
+``null works (test on an int)``.actual = ``null works (test on an int)``.expected |> log
+
+``null works (test on an int)``.actual
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
+
+HR()
+
+module ``null works (test on a boolean)`` =
+    open Thoth.Json
+    let expected = Ok(false)
+    let actual =
+        Decode.fromString (Decode.nil false) "null"
+
+``null works (test on a boolean)``.actual |> log
+
+// explicit style with lamba and match with
+``null works (test on a boolean)``.actual
+|> fun x -> 
+    match x with
+    | Ok values -> values |> log
+    | Error err -> failwith err |> log
 
 
+// shortcut syntax via function
+``null works (test on a boolean)``.actual
+|> function
+    | Ok values -> values |> log
+    | Error err -> failwith err |> log
 
+HR()
 
+module ``succeed works`` =
+    open Thoth.Json 
+    let expected = Ok(7)
+    let actual =
+        Decode.fromString (Decode.succeed 70) "true"
 
+``succeed works``.actual |> log
 
+HR()
+
+// succeed is a Result-type
+module ``succeed output an error if the JSON is invalid`` =
+    open Thoth.Json 
+    let expected = Error("Given an invalid JSON: Unexpected token m in JSON at position 0")
+    let actual =
+        Decode.fromString (Decode.succeed 7) "maxime"
+
+``succeed output an error if the JSON is invalid``.actual |> log
+//``succeed output an error if the JSON is invalid``.actual = ``succeed output an error if the JSON is invalid``.expected |> log
+
+HR()
+
+module ``fail works`` =
+    open Thoth.Json 
+    let msg = "Failing because it's fun"
+    let expected : Result<obj, string> = Error("Error at: `$`\nThe following `failure` occurred with the decoder: " + msg)
+    let actual : Result<obj, string> =
+        Decode.fromString (Decode.fail msg) "true"
+
+``fail works``.actual |> log
+``fail works``.actual = ``fail works``.expected |> log
+
+HR()
+
+module ``andThen works`` =
+    open Thoth.Json
+    let expected = Ok 1
+
+    let infoHelp version =
+        match version with
+        | 4 -> 
+            Decode.succeed 11
+        | 3 ->
+            Decode.succeed 12
+        | _ -> 
+            Decode.fail <| "Trying to decode info, but version " + (version.ToString()) + "is not supported"
+
+    let info : Decoder<int> =
+        Decode.field "version" Decode.int
+        |> Decode.andThen infoHelp
+
+    let actual =
+        Decode.fromString info """{ "version": 3, "data": 2 }"""
+
+``andThen works``.actual |> log
+
+HR()
+
+module ``andThen generate an error if an error occurred`` =
+    open Thoth.Json
+    let expected : Result<obj,string> =
+        Error(
+            """
+Error at: `$`
+Expecting an object with a field named `version` but instead got:
+{
+    "info": 3,
+    "data": 2
+}
+            """.Trim())
+        
+    let infoHelp version : Decoder<int> =
+        match version with
+        | 4 ->
+            Decode.succeed 1
+        | 3 ->
+            Decode.succeed 1
+        | _ -> 
+            Decode.fail <| "Trying to decode info, but version " + (version.ToString()) + "is not supported"
+
+    let info =
+        Decode.field "version" Decode.int
+        |> Decode.andThen infoHelp
+
+    let actual =
+        Decode.fromString info """{ "info": 3, "data": 2 }"""
+    
+
+``andThen generate an error if an error occurred``.actual |> log
+
+SECTION()
+
+"Mapping" |> log
+
+SECTION()
+
+// up to line 1188
