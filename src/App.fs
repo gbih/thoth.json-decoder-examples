@@ -318,9 +318,10 @@ HR()
 module ``index works`` =
     open Thoth.Json
     let json = """["maxime", "alfonso", "steffen"]"""
-    let expected = Ok("alfonso")
+    let expected = Ok("steffen")
     let actual =
-        Decode.fromString (Decode.index 1 Decode.string) json
+        Decode.fromString (Decode.index 2 Decode.string) json
+
 ``index works``.actual |> log
 ``index works``.actual = ``index works``.expected |> log
 match ``index works``.actual with
@@ -332,6 +333,84 @@ SECTION()
 "Data structure" |> log
 
 SECTION()
+
+module ``list works`` =
+    open Thoth.Json
+    let expected = Ok([1; 2; 3])
+    let actual =
+        Decode.fromString (Decode.list Decode.int) "[1, 2, 3]"
+
+``list works``.actual |> log
+``list works``.actual = ``list works``.expected |> log
+match ``list works``.actual with
+| Ok values -> values |> log
+| Error err -> failwith err |> log
+
+HR()
+
+module ``nested lists work`` =
+    open Thoth.Json
+    let expected = Ok([[ "maxime" ]])
+    let actual =
+        [[ "maxime" ]]
+        |> List.map (fun d ->
+            d
+            |> List.map Encode.string
+            |> Encode.list)
+        |> Encode.list
+        |> Encode.toString 4
+        |> Decode.fromString (Decode.list (Decode.list Decode.string))
+
+``nested lists work``.actual |> log
+``nested lists work``.actual = ``nested lists work``.expected |> log
+
+HR()
+
+module ``nested lists work case-handling``=
+    open Thoth.Json
+    let expected = Ok([[ "maxime" ]])
+    let actual =
+        [[ "maxime" ]]
+        |> List.map (fun d ->
+            d
+            |> List.map Encode.string
+            |> Encode.list)
+        |> Encode.list
+        |> Encode.toString 4
+        |> Decode.fromString (Decode.list (Decode.list Decode.string))
+        |> function
+        | Ok v -> v
+        | Error err -> failwith err
+
+
+
+
+
+// 1-D list
+module ``nested lists work3`` =
+    open Thoth.Json
+    let expected = [["maxime"]]
+    let actual =
+        [ "maxime" ]
+        |> List.map (fun d ->
+            d
+            |> Encode.toString 0
+        )
+
+``nested lists work3``.actual |> log
+
+
+// 1-D list, another variation for encoding
+module ``nested lists work4`` =
+    open Thoth.Json
+    let expected = [["maxime"]]
+    let actual =
+        Encode.list
+            [ Encode.string "maxime"]
+        |> Encode.toString 0
+
+``nested lists work4``.actual |> log
+
 
 
 
