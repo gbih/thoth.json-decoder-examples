@@ -1,5 +1,5 @@
 module ThothExamples
-
+open Tests.Types
 (**
 ### From Tests to Working Code
 * Read the official tests and understand them
@@ -9,8 +9,13 @@ module ThothExamples
 *)
 
 // open Fable.Core.JsInterop // !^
-// open Fetch
-// open Fable.Core
+
+(**
+http://fsharp.org/specs/language-spec/3.0/FSharpSpec-3.0-final.pdf
+Any sequence of characters that is enclosed in double-backtick marks (``   ``), excluding newlines,tabs , and double-back tick pairs themselves, is treated as an identifier. Note that when an identifier is used for the name of a type, union type case, module, or namespace, the following characters are not allowed even inside double-backtick marks:
+
+‘.', '+', '$', '&', '[', ']', '/', '\\', '*', '\"', '`'
+*)
 
 
 //-------------------------------
@@ -330,7 +335,7 @@ match ``index works``.actual with
 
 SECTION()
 
-"Data structure" |> log
+"Data structure: List" |> log
 
 SECTION()
 
@@ -366,7 +371,7 @@ module ``nested lists work`` =
 
 HR()
 
-module ``nested lists work case-handling``=
+module ``nested lists work and case handling`` =
     open Thoth.Json
     let expected = Ok([[ "maxime" ]])
     let actual =
@@ -382,12 +387,12 @@ module ``nested lists work case-handling``=
         | Ok v -> v
         | Error err -> failwith err
 
+``nested lists work and case handling``.actual |> log
 
-
-
+HR()
 
 // 1-D list
-module ``nested lists work3`` =
+module ``nested lists work 1D-A`` =
     open Thoth.Json
     let expected = [["maxime"]]
     let actual =
@@ -397,103 +402,351 @@ module ``nested lists work3`` =
             |> Encode.toString 0
         )
 
-``nested lists work3``.actual |> log
+``nested lists work 1D-A``.actual |> sprintf "1D Encoding:\n%A" |> log
 
+HR()
 
-// 1-D list, another variation for encoding
-module ``nested lists work4`` =
+module ``nested lists work 2D-1`` =
     open Thoth.Json
     let expected = [["maxime"]]
     let actual =
+        [ [ "maxime2" ] ]
+            |> List.map (fun d ->
+                d
+                |> List.map Encode.string
+                |> Encode.list)
+            |> Encode.list
+            |> Encode.toString 4
+
+``nested lists work 2D-1``.actual |> sprintf "2D Encoding:\n%A" |> log
+
+HR()
+
+
+
+// 1-D list, another variation for encoding
+module ``nested lists work 1D-B`` =
+    open Thoth.Json
+    let expected = ["maxime"]
+    let actual =
         Encode.list
             [ Encode.string "maxime"]
-        |> Encode.toString 0
+        |> Encode.toString 4
 
-``nested lists work4``.actual |> log
+``nested lists work 1D-B``.actual |> sprintf "1D Encoding:\n%A" |> log
 
+// HOW TO TO DO 3D LIST ????
 
+SECTION()
 
+"Data structure: Array" |> log
 
-
-
-
-
-
-
-
-// // non-function
-// module Decoder001 =
-//     open Thoth.Json
-//     let actual = Decode.fromString Decode.string "\"maxime\""
-//     actual |> sprintf "Decode.fromString:\n%A" |> log
-
-//     match actual with
-//     | Ok values ->
-//         values |> log
-//     | Error values -> 
-//         values |> log
+SECTION()
 
 
-// module Decoder001b =
-//     open Thoth.Json
-//     let actual =
-//         let x = Decode.fromString Decode.string "\"maxime\""
-//         match x with
-//             | Ok values -> 
-//                 values
-//             | Error values ->
-//                 "Error"
-// Decoder001b.actual |> sprintf "module with function and destructuring of `Ok Error` case: \n%A"  |> log
+module ``array works`` =
+    open Thoth.Json
+    // Need to pass by a list otherwise Fable use:
+    // new Int32Array([1, 2, 3]) and the test fails
+    // And this would give:
+    // Expected: Result { tag: 0, data: Int32Array [ 1, 2, 3 ] }
+    // Actual: Result { tag: 0, data: [ 1, 2, 3 ] }
+    let expected : Result<int [],string> = Ok([1; 2; 3] |> List.toArray)
+
+    let actual = 
+        Decode.fromString (Decode.array Decode.int) "[1, 2, 3]"
+
+``array works``.actual |> log
+``array works``.actual = ``array works``.expected |> log
+``array works``.actual 
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
 
 
-// module Decoder001c =
-//     open Thoth.Json
-//     let actual =
-//         Decode.fromString Decode.string "\"maxime\""
-//         |> function
-//         | Ok values ->
-//             values
-//         | Error values ->
-//             "Error"
-// Decoder001c.actual |> sprintf "module with function, more streamlined handling of `Ok Error` case: %A" |> log
+SECTION()
+
+"Data structure: keyValue Pairs" |> log
+
+SECTION()
+
+module ``keyValuePairs works`` =
+    open Thoth.Json
+    let expected = Ok([("a", 1) ; ("b", 2) ; ("c", 3)])
+    let actual =
+        Decode.fromString (Decode.keyValuePairs Decode.int) """{ "a":1, "b":2, "c":3}"""
 
 
-// module Decoder001d =
-//     open Thoth.Json
-//     let json = """{ "name" : "maxime", "age": 25 }"""
-//     let actual = Decode.fromString (Decode.field "age" Decode.int ) json
-//     actual |> sprintf "Object primitives - Decode.fromString (Decode.field):\n%A" |> log
-
-//     match actual with
-//     | Ok values ->
-//         values |> log
-        
-//     | Error values -> 
-//         values |> log
+``keyValuePairs works``.actual |> log
+``keyValuePairs works``.actual = ``keyValuePairs works``.expected |> log
+``keyValuePairs works``.actual
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
 
 
-// module Decoder001e =
-//     open Thoth.Json
+SECTION()
 
-//     let json = 
-//         """
-// [1, "maxime"]
-//         """
-        
-//     let actual json = 
-//         let test = Decode.fromString (Decode.tuple2 Decode.int Decode.string) json        
-//         match test with
-//         | Ok value -> value
-//         | Error er -> failwith er
+"Data structure: dict" |> log
 
-//     actual json |> sprintf "Tuple example, pattern on `Ok Error case`:\n%A" |> log
+SECTION()
 
 
+module ``dict works`` =
+    open Thoth.Json
+    let expected : Result<Map<string,int>,string> = Ok(Map.ofList([("a",1); ("b", 2); ("c", 3)]))
+    let actual = 
+        Decode.fromString (Decode.dict Decode.int) """{ "a": 1, "b": 2, "c": 3 }"""
 
-// module Decoder002 =
-//     open Thoth.Json 
-//     let actual  =
-//         //Decode.unsafeFromString Decode.string "\"maxime\""
-//         Decode.fromString Decode.string "\"maxime\""
-//     actual |> sprintf "Decode.unsafeFromString:\n%A" |> log
+``dict works``.actual |> log
+``dict works``.actual = ``dict works``.expected |> log
+
+``dict works``.actual
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
+
+HR()
+
+module ``dict with custom decoder works`` =
+    open Thoth.Json
+    // Can be confusing -- what type wraps which types?
+    // Result is the "highest"-level type, akin to an Option, wrapping around everything here
+    // Next, Map is the second-highest level type, wrapping <string,Record2>
+    let expected :  Result<Map<string,Record2>,string> = 
+        Ok(Map.ofList(
+            [
+                ("a", Record2.Create 1. 1.)
+                ("b", Record2.Create 2. 2.)
+                ("c", Record2.Create 3. 3.)
+            ]
+        ))
+
+    let decodePoint =
+        Decode.map2 Record2.Create
+            (Decode.field "a" Decode.float)
+            (Decode.field "b" Decode.float)
+
+    let actual = 
+        Decode.fromString (Decode.dict decodePoint)
+            """
+{
+    "a":
+        {
+            "a": 1.0,
+            "b": 1.0
+        },
+    "b":
+        {
+            "a": 2.0,
+            "b": 2.0
+        },
+    "c":
+        {
+            "a": 3.0,
+            "b": 3.0
+        }
+}
+            """
+
+
+``dict with custom decoder works``.actual |> log
+``dict with custom decoder works``.actual  = ``dict with custom decoder works``.expected |> log
+
+``dict with custom decoder works``.actual
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
+
+
+SECTION()
+
+"Inconsistent structure" |> log
+
+SECTION()
+
+module ``oneOf works`` =
+    open Thoth.Json
+    let expected = Ok([1;2;0;4])
+
+    let badInt =
+        Decode.oneOf [ Decode.int; Decode.nil 0]
+
+    let actual =
+        Decode.fromString (Decode.list badInt) "[1,2,null,4]"
+
+``oneOf works``.expected |> sprintf "expected: %A" |> log
+``oneOf works``.actual |> log
+``oneOf works``.actual = ``oneOf works``.expected |> log
+
+``oneOf works``.actual
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
+
+
+HR()
+
+module ``oneOf works in combination with object builders`` =
+    open Thoth.Json
+    let json = """{ "Bar": { "name": "maxime", "age": 25 } }"""
+    let expected = Ok(Choice2Of2 { fieldA = "maxime" })
+
+    let decoder1 =
+        Decode.object (fun get ->
+            { fieldA = get.Required.Field "name" Decode.string })
+
+    let decoder2 =
+        Decode.oneOf [
+            Decode.field "Foo" decoder1 |> Decode.map Choice1Of2
+            Decode.field "Bar" decoder1 |> Decode.map Choice2Of2
+        ]
+
+    let actual = 
+        Decode.fromString decoder2 json
+
+``oneOf works in combination with object builders``.json |> log
+``oneOf works in combination with object builders``.actual |> log
+//``oneOf works in combination with object builders``.expected = ``oneOf works in combination with object builders``.expected |> log
+
+``oneOf works in combination with object builders``.expected
+|> function
+| Ok values -> values |> log
+| Error err -> failwith err |> log
+
+
+(**
+### Choice type:
+
+https://fsharpforfunandprofit.com/posts/railway-oriented-programming-carbonated/
+
+The definition of the Choice type is as follows
+
+ type Choice<'a, 'b> =
+      | Choice1Of2 of 'a
+      | Choice2Of2 of 'b
+
+
+Good question! In the original post (see http://fsharpforfunandprofi... ) and talk (http://fsharpforfunandprofi... ) I DO use a special discriminated union.
+
+Some people suggested that I should use a Choice so as to be compatible with other F# code (such as async -- https://msdn.microsoft.com/... ) so I thought that in this post I'd show how to be compatible with Choice using active patterns.
+
+
+
+https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.choice%5B't1%2C't2%5D-union-%5Bfsharp%5D
+Core.Choice<'T1,'T2> Union (F#)
+Helper types for active patterns with two choices.
+
+Syntax
+[<StructuralEquality>]
+[<StructuralComparison>]
+type Choice<'T1,'T2> =
+| Choice1Of2 of 'T1
+| Choice2Of2 of 'T2
+with
+interface IStructuralEquatable
+interface IComparable
+interface IComparable
+interface IStructuralComparable
+end
+
+https://gist.github.com/viswaug/f6b3ec4df66f55b1d037
+
+*)
+HR()
+
+
+module ``oneOf works with optional`` =
+    open Thoth.Json
+    let expected1 = (Ok(Normal 4.5))
+    let expected2 = (Ok(Reduced(Some 4.5)))
+    let expected3 = (Ok(Reduced None))
+    let expected4 = (Ok Zero)
+
+    let decoder =
+        Decode.oneOf
+            [
+                Decode.field "Normal" Decode.float |> Decode.map Normal
+                Decode.field "Reduced" (Decode.option Decode.float) |> Decode.map Reduced
+                Decode.field "Zero" Decode.bool |> Decode.map (fun _ -> Zero)
+             ]
+    let actual1 = 
+        """{"Normal": 4.5}""" |> Decode.fromString decoder
+    let actual2 =
+        """{"Reduced": 4.5}""" |> Decode.fromString decoder
+    let actual3 =
+        """{"Reduced": null}""" |> Decode.fromString decoder
+    let actual4 =
+        """{"Zero": true}""" |> Decode.fromString decoder 
+
+
+``oneOf works with optional``.actual1 |> log
+``oneOf works with optional``.actual1 = ``oneOf works with optional``.expected1 |> log
+
+``oneOf works with optional``.actual2 |> log
+``oneOf works with optional``.actual2 = ``oneOf works with optional``.expected2 |> log
+
+``oneOf works with optional``.actual3 |> log
+``oneOf works with optional``.actual3 = ``oneOf works with optional``.expected3 |> log
+
+``oneOf works with optional``.actual4 |> log
+``oneOf works with optional``.actual4 = ``oneOf works with optional``.expected4 |> log
+
+
+HR()
+
+// line 890
+module ``oneOf output errors if all case fails`` =
+    open Thoth.Json
+    let badInt =
+        Decode.oneOf [ Decode.string; Decode.field "test" Decode.string;  ]
+    let actual =
+        Decode.fromString (Decode.list badInt) "[1,2,null,4]"
+
+``oneOf output errors if all case fails``.actual |> log
+
+
+HR()
+
+
+module ``optional works`` =
+    open Thoth.Json
+    let json = """{ "name": "maxime", "age": 25, "something_undefined": null }"""
+
+    let expectedValid = Ok(Some "maxime")
+    let actualValid =
+        Decode.fromString (Decode.optional "name" Decode.string) json
+
+    actualValid |> log
+    expectedValid = actualValid |> log
+
+
+    match Decode.fromString (Decode.optional "name" Decode.int) json with
+    | Error _ -> ()
+    | Ok _ -> failwith "Expected type error for `name` field"
+
+    let expectedMissingField = Ok(None)
+    let actualMissingField =
+        Decode.fromString (Decode.optional "height" Decode.int) json
+
+    actualMissingField |> log
+    expectedMissingField = actualMissingField |> log
+
+
+    let expectedUndefinedField = Ok(None)
+    let actualUndefinedField =
+        Decode.fromString (Decode.optional "something_undefined" Decode.string) json
+
+    actualUndefinedField |> log
+    expectedUndefinedField = actualUndefinedField |> log
+
+//------------
+
+// stop at testCase "optionalAt works" line 951
+
+
+
+
+
+
 
