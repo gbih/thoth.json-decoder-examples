@@ -48,6 +48,28 @@ module Random =
 
 //---------------------
 
+let jsonRecord =
+    """{ "a": 1.0,
+         "b": 2.0,
+         "c": 3.0,
+         "d": 4.0,
+         "e": 5.0,
+         "f": 6.0,
+         "g": 7.0,
+         "h": 8.0 }"""
+
+let jsonRecordInvalid =
+    """{ "a": "invalid_a_field",
+         "b": "invalid_a_field",
+         "c": "invalid_a_field",
+         "d": "invalid_a_field",
+         "e": "invalid_a_field",
+         "f": "invalid_a_field",
+         "g": "invalid_a_field",
+         "h": "invalid_a_field" }"""
+
+//---------------------
+
 SECTION()
 
 "Primitives" |> log
@@ -928,3 +950,312 @@ SECTION()
 SECTION()
 
 // up to line 1188
+
+(**
+### Map functions
+
+To get data from several fields and convert them into a record you will 
+need to use the map functions like map2, map3, ..., map8
+https://mangelmaxime.github.io/Thoth/json/v3.html
+https://guide.elm-lang.org/effects/json.html
+*)
+
+module ``map example`` =
+    open Thoth.Json
+    type Point = 
+        { X : int }
+        static member Decoder : Decoder<Point> =
+            Decode.map 
+                (fun x  -> { X = x } : Point) // constructor
+                (Decode.field "x" Decode.int) // decoder 1
+
+    let actual = Decode.fromString Point.Decoder """{"x": 10} """
+
+"module ``map example``" |> log
+``map example``.actual |> log
+
+HR()
+
+// Try two decoders and then combine the result. 
+// We can use this to decode objects with many fields.
+module ``map2 example`` =
+    open Thoth.Json
+    type Point =
+        { X : int; Y : string}
+        static member Decoder : Decoder<Point> =
+            Decode.map2 
+                (fun x y -> { X = x; Y = y } : Point) // constructor
+                (Decode.field "x" Decode.int) // decoder 1
+                (Decode.field "y" Decode.string) // decoder 2
+
+    let actual = Decode.fromString Point.Decoder """{"x": 10, "y": "George"}"""
+
+"module ``map2 example``" |> log
+``map2 example``.actual |> log
+
+HR()
+
+
+
+module ``map works`` =
+    open Thoth.Json
+    let expected = Ok(6)
+
+    let stringLength : string -> JsonValue -> Result<int,DecoderError> =
+        Decode.map 
+            String.length // constructor
+            Decode.string // decoder 1
+
+    // ctor is constructor
+    let actual =
+        Decode.fromString stringLength "\"maxime\""
+
+"module ``map works`" |> log
+``map works``.actual |> log
+
+HR()
+
+module ``map2 works`` =
+    open Thoth.Json
+    let expected = Ok({a = 1.; b = 2.} : Record2)
+
+    let decodePoint : string -> JsonValue -> Result<Record2,DecoderError> = 
+        Decode.map2 
+            Record2.Create // constructor
+            (Decode.field "a" Decode.float) // decoder 1
+            (Decode.field "b" Decode.float) // decoder 2
+
+    let actual =
+        Decode.fromString decodePoint jsonRecord
+
+"module ``map2 works``" |> log
+``map2 works``.actual |> log
+
+
+
+// skip map3..map8
+
+SECTION()
+
+"object builder" |> log
+
+SECTION()
+
+module ``get Required Field works`` =
+    open Thoth.Json
+    let json = """{"name":"maxime", "age": 25}"""
+    let expected = Ok({fieldA = "maxime"})
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { fieldA = get.Required.Field "name" Decode.string}
+            )
+    
+    let actual = 
+        Decode.fromString decoder json
+
+``get Required Field works``.actual |> log
+
+HR()
+
+module ``get Required Field returns Error if field is missing`` =
+    open Thoth.Json
+    let jsonWithoutTrim = """  { "age": 25 }  """
+    let json = """  { "age": 25 }  """.Trim()
+    let decoder =
+        Decode.object
+            (fun get ->
+                { fieldA = get.Required.Field "name" Decode.string}    
+            )
+
+    let actual = 
+        Decode.fromString decoder json
+
+``get Required Field returns Error if field is missing``.actual |> log
+``get Required Field returns Error if field is missing``.json |> log
+``get Required Field returns Error if field is missing``.jsonWithoutTrim |> log
+
+HR()
+
+module ``getRequiredField returns Error if type is incorrect`` =
+    open Thoth.Json
+    let json = """{ "name": 12, "age": 25 }""".Trim()
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { fieldA = get.Required.Field "name" Decode.string }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getRequiredField returns Error if type is incorrect``" |> log
+``getRequiredField returns Error if type is incorrect``.actual |> log
+
+HR()
+
+module ``getOptionalField works`` =
+    open Thoth.Json
+    let json = """{"name":"maxime", "age":25}""".Trim()
+
+    let expected = Ok({optionalField = Some "maxime"})
+
+    let decoder = 
+        Decode.object
+            (fun get ->
+                // same syntax as for getting a field
+                { optionalField = get.Optional.Field "name" Decode.string }
+            )
+    let actual = 
+        Decode.fromString decoder json
+
+``getOptionalField works``.actual |> log
+
+HR()
+
+module ``getOptionalField returns None value if field is missing`` =
+    open Thoth.Json
+    let json = """{"age":25}""".Trim()
+    let expected = Ok({optionalField = None})
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                {optionalField = get.Optional.Field "name" Decode.string}
+            )
+    let actual = 
+        Decode.fromString decoder json
+
+"module ``getOptionalField returns None value if field is missing``" |> log
+``getOptionalField returns None value if field is missing``.actual |> log
+``getOptionalField returns None value if field is missing``.actual = ``getOptionalField returns None value if field is missing``.expected |> log
+
+HR()
+
+module ``getOptionalField returns None if field is null`` =
+    open Thoth.Json 
+    let json = """{ "name": null, "age": 25 }""".Trim()
+
+    let decoder = 
+        Decode.object
+            (fun get ->
+                    { optionalField = get.Optional.Field "name" Decode.string}
+            )
+
+    let actual = 
+        Decode.fromString decoder json
+
+"module ``getOptionalField returns None if field is null``" |> log
+``getOptionalField returns None if field is null``.actual |> log
+
+HR()
+
+module ``getOptionalField returns Error value if decoder fails`` =
+    open Thoth.Json
+    let json = """{"name":12, "age":25}""".Trim()
+    
+    let decoder = 
+        Decode.object(
+            fun get ->
+                { optionalField = get.Optional.Field "name" Decode.string }
+        )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getOptionalField returns Error value if decoder fails``" |> log
+``getOptionalField returns Error value if decoder fails``.actual |> log
+
+HR()
+
+module ``nested getOptionalField greaterthan getRequiredField returns None if field is null`` =
+    open Thoth.Json
+    let json = """{"user":null, "field2":25}""".Trim()
+    let expected = Ok({User = None; Field2 = 25})
+
+    let userDecoder =
+        Decode.object
+            (fun get ->
+                {
+                    Id = get.Required.Field "id" Decode.int
+                    Name = get.Required.Field "name" Decode.string
+                    Email = get.Required.Field "email" Decode.string
+                    Followers = 0
+                }
+            )
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { 
+                    User = get.Optional.Field "user" userDecoder
+                    Field2 = get.Required.Field "field2" Decode.int 
+                }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``nested getOptionalField greaterthan getRequiredField returns None if field is null``" |> log
+``nested getOptionalField greaterthan getRequiredField returns None if field is null``.actual |> log
+
+module ``getOptionalField returns Error if type is incorrect`` =
+    open Thoth.Json
+    let json = """{ "name": 12, "age": 25 }"""
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { optionalField = get.Optional.Field "name" Decode.string }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+
+"module ``getOptionalField returns Error if type is incorrect``" |> log
+``getOptionalField returns Error if type is incorrect``.actual |> log
+
+HR()
+
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1521
+// line 1521
+module ``getRequiredAt works`` =
+    open Thoth.Json
+    let json = """{"user" : {"name":"maime", "age":25}}""".Trim()
+    let expected = Ok({fieldA = "maxime"})
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                {fieldA = get.Required.At ["user";"name"] Decode.string}
+            )
+    let actual = 
+        Decode.fromString decoder json
+
+"module ``getRequiredAt works``" |> log
+``getRequiredAt works``.actual |> log
+
+HR()
+
+module ``getRequiredAt returns Error if non object in path`` =
+    open Thoth.Json
+    let json = """{"user": "maxime"}""".Trim()
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { fieldA = get.Required.At ["user"; "name"] Decode.string}
+            )
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getRequiredAt returns Error if non object in path``" |> log
+``getRequiredAt returns Error if non object in path``.actual |> log
+
+HR()
+
+
+// line 1558
