@@ -1787,37 +1787,167 @@ module ``getOptionalRaw returns None if a field is missing`` =
 HR()
 
 
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1867
 // line 1867
 module ``getOptionalRaw returns an Error if a decoder fail`` =
     open Thoth.Json
-    1
+    let json =
+        """
+        {
+            "enabled": true,
+            "shape": "invalid_shape"
+        }
+        """.Trim()
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen
+            (function
+                | "circle" ->
+                    Shape.DecoderCircle
+                | "rectangle" ->
+                    Shape.DecoderRectangle
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                {
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    Shape = get.Optional.Raw shapeDecoder
+                }
+            )
+    
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getOptionalRaw returns an Error if a decoder fail``" |> log
+``getOptionalRaw returns an Error if a decoder fail``.actual |> log
 
 
 HR()
 
 
 // 1898
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1898
 module ``getOptionalRaw returns an Error if the type is invalid`` =
     open Thoth.Json
-    1
+    let json =
+        """
+        {
+            "enabled": true,
+            "shape": "circle",
+            "radius": "maxime"
+        }
+        """
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen
+            (function
+                | "circle" ->
+                    Shape.DecoderCircle
+                | "rectangle" ->
+                    Shape.DecoderRectangle
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+    
+    let decoder =
+        Decode.object
+            (fun get ->
+                {
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    Shape = get.Optional.Raw shapeDecoder
+                }
+            )
+    
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getOptionalRaw returns an Error if the type is invalid``" |> log
+``getOptionalRaw returns an Error if the type is invalid``.actual |> log
 
 
 HR()
 
 
 // 1930
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1930
 module ``getOptionalRaw returns None if a decoder fails with null`` =
     open Thoth.Json
-    1
+    let json =
+        """
+        {
+            "enabled": true,
+            "shape": null
+        }
+        """
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen
+            (function
+                | "circle" ->
+                    Shape.DecoderCircle
+                | "rectangle" ->
+                    Shape.DecoderRectangle
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                {
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    Shape = get.Optional.Raw shapeDecoder
+                }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getOptionalRaw returns None if a decoder fails with null``" |> log
+``getOptionalRaw returns None if a decoder fails with null``.actual |> log
 
 
 HR()
 
 
 // 1962
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1962
 module ``Object builders returns all the Errors`` =
     open Thoth.Json
-    1
+    let json = 
+        """
+        { 
+            "age": 25, 
+            "fieldC": "not_a_number", 
+            "fieldD": { "sub_field": "not_a_boolean" } 
+        }
+        """
+
+    let decode =
+        Decode.object
+            (fun get ->
+                {
+                    FieldA = get.Required.Field "missing_field_1" Decode.string
+                    FieldB = get.Required.At ["missing_field_2"; "sub_field"] Decode.string
+                    FieldC = get.Optional.Field "fieldC" Decode.int
+                                |> Option.defaultValue -1
+                    FieldD = get.Optional.At [ "fieldD"; "sub_field"] Decode.bool
+                                |> Option.defaultValue false
+                }
+            )
+
+    let actual = 
+        Decode.fromString decode json
+
+"module ``Object builders returns all the Errors``" |> log
+``Object builders returns all the Errors``.actual |> log
 
 
 HR()
@@ -1826,4 +1956,53 @@ HR()
 ////////////////////
 // 2014 AUTO TESTS
 
+module ``AutoDecodefromString works`` =
+    open Thoth.Json
+    open System
+    let now = DateTime.Now
+    let value =
+        { a = 5
+          b = "bar"
+          c = [false, 3; true, 5; false, 10]
+          d = [|Some(Foo 14); None|]
+          e = Map [("oh", { a = 2.; b = 2. }); ("ah", { a = -1.5; b = 0. })]
+          f = now
+          g = set [{ a = 2.; b = 2. }; { a = -1.5; b = 0. }]
+          h = TimeSpan.FromSeconds(5.)
+        }
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<Record9>(json)
 
+"module ``AutoDecodefromString works``" |> log
+``AutoDecodefromString works``.json |> log
+``AutoDecodefromString works``.actual |> log
+
+HR()
+
+module ``Auto serialization works with recursive types`` =
+    open Thoth.Json
+    let len xs =
+        let rec lenInner acc = function
+            | Cons(_,rest) -> lenInner (acc + 1) rest
+            | Nil -> acc
+        lenInner 0 xs
+    let li = Cons(1, Cons(2, Cons(3, Nil)))
+    let json = Encode.Auto.toString(4, li)
+    let actual = Decode.Auto.unsafeFromString<MyList<int>>(json)
+
+"module ``Auto serialization works with recursive types``" |> log
+``Auto serialization works with recursive types``.actual |> log
+
+
+HR()
+
+module ``Auto decoders work for string`` =
+    open Thoth.Json
+    let value = "maxime"
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<string> json
+
+"module ``Auto decoders work for string``" |> log
+``Auto decoders work for string``.actual |> log
+
+// 2065
