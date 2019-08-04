@@ -21,6 +21,11 @@ Any sequence of characters that is enclosed in double-backtick marks (``   ``), 
 //-------------------------------
 
 module Print =
+    open Fable.Core
+
+    [<Emit("JSON.stringify($0,null,3)")>]
+    let JSONStringify x : 'a = jsNative
+
     let elementId = "elmish-app"
     let elem = Browser.Dom.document.getElementById(elementId)
     elem.setAttribute("style", "color:black; margin:1rem; display: block;font-family: monospace;white-space: pre-wrap;"; )
@@ -33,10 +38,20 @@ module Print =
         showElement.innerHTML <- sprintf "%A\n" x
         Browser.Dom.document.getElementById(elementId).appendChild showElement |> ignore
 
+    let s input =
+        let x = JSONStringify input
+        //let showElement = Browser.Dom.document.createElement("li")
+        let showElement = Browser.Dom.document.createElement("span")
+        // showElement.innerHTML <- sprintf "%A\n- - - - - - - - - - - - - - - - - - -" x
+        showElement.innerHTML <- sprintf "%A\n" x
+        Browser.Dom.document.getElementById(elementId).appendChild showElement |> ignore
+
 let log = Print.p
+let logStringify = Print.s
 
 let HR () = "- - - - - - - - - - - - - - - - - - -" |> log
 let SECTION() = "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =" |> log 
+
 //-------------------------------
 
 module Random =
@@ -1218,29 +1233,151 @@ module ``getOptionalField returns Error if type is incorrect`` =
 "module ``getOptionalField returns Error if type is incorrect``" |> log
 ``getOptionalField returns Error if type is incorrect``.actual |> log
 
+
 HR()
 
+
+// get.Required.At, line 1521. This is an object primitive
 // https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1521
-// line 1521
-module ``getRequiredAt works`` =
+// `at` originally defined here:
+// https://github.com/thoth-org/Thoth.Json/blob/master/src/Decode.fs#L324
+
+// Example to work through get.Required.At
+
+(**
+alfonsogarciacaro/fable-repl.css
+https://gist.github.com/alfonsogarciacaro/f15cd60eef96da4f9cd5924fef21ecc7
+https://randomuser.me/api/
+
+Minimum for a useful POC
+* Thoth.Json (serialize/deserialize)
+* Fable.Fetch (make Http requests)
+* Fable-React and Fable-Elmish
+
+Possibly nice to have
+* FSharp Data (pull data from website in typed-form, able to create your own "API")
+* Giraffe (using FSharp Data)
+
+*)
+module ``ThothRandomUser example`` =
+    open System
     open Thoth.Json
-    let json = """{"user" : {"name":"maime", "age":25}}""".Trim()
+    open Fetch
+
+    (**
+    We use get.Required.At to access Json in this parent-child structure:
+    ```
+    "name": {
+        "title": "miss",
+        "first": "lilou",
+        "last": "roux"
+    }
+    ```
+    To access and decode name.first, we use this syntax:
+        `get.Required.At ["name"; "first"] Decode.string`
+    *)
+
+
+    // Model
+    type Gender =
+        | Male
+        | Female
+
+        static member Decoder =
+            Decode.string
+            |> Decode.andThen(
+                function
+                | "male" -> Decode.succeed Male
+                | "female" -> Decode.succeed Female
+                | invalid -> "`" + invalid + "` isn't a valid value for Gender" |> Decode.fail
+            )
+    
+    type User =
+        {
+            Gender : Gender
+            FullName : string
+            Email : string
+            CellPhone : string
+            OfficePhone : string
+            Age : int
+            Birthday : DateTime
+            Picture : string
+        }
+
+        static member Decoder =
+            Decode.object (fun get ->
+                let firstname = get.Required.At ["name"; "first"] Decode.string
+                let lastname = get.Required.At ["name"; "last"] Decode.string
+
+                { 
+                    Gender = get.Required.Field "gender" Gender.Decoder
+                    FullName = firstname + " " + lastname
+                    Email = get.Required.Field "email" Decode.string
+                    CellPhone = get.Required.Field "cell" Decode.string
+                    OfficePhone = get.Required.Field "phone" Decode.string
+                    // Inside a record, `dob` is a JSON field returned from the server
+                    Age = get.Required.At ["dob"; "age"] Decode.int
+                    Birthday = get.Required.At ["dob"; "date"] Decode.datetime
+                    Picture = get.Required.At ["picture"; "large"] Decode.string
+                }
+            )
+    
+    type UserList = 
+        { userList : User list }
+        static member Decoder =
+            Decode.list User.Decoder
+
+    let getRandomUser () = promise {
+        let! response = Fetch.fetch "https://randomuser.me/api/" []
+        let! responseText = response.text()
+
+        "- - - - - - - - - - - - - - - - - - -" |> log
+        "``ThothRandomUser example``" |> log
+        "RAW RESPONSE:" |> log
+        responseText |> log
+
+        let resultDecoder = 
+            Decode.field "results" (Decode.index 0 User.Decoder)
+        
+        return Decode.fromString resultDecoder responseText
+    }
+
+
+// ``ThothRandomUser example``.getRandomUser() 
+// |> Promise.map (fun txt ->
+//     txt
+//     |> sprintf "\nPARSED RESPONSE, VIA PROMISE.MAP:\n%A"
+//     |> log
+//     ) |> ignore
+
+
+HR()
+
+
+module ``getDOTRequiredDOTAt works`` =
+    open Thoth.Json
+
+    // The only place we can use `at` here is the node `user`, 
+    // since it is the parent of `name` and `age`
+    let json = """{"user" : {"name":"maxime", "age":25}}""".Trim()
     let expected = Ok({fieldA = "maxime"})
 
     let decoder =
         Decode.object
             (fun get ->
-                {fieldA = get.Required.At ["user";"name"] Decode.string}
+                {fieldA = get.Required.At ["user"; "name";] Decode.string}
             )
     let actual = 
         Decode.fromString decoder json
 
-"module ``getRequiredAt works``" |> log
-``getRequiredAt works``.actual |> log
+"module ``getDOTRequiredDOTAt works``" |> log
+``getDOTRequiredDOTAt works``.actual |> log
+``getDOTRequiredDOTAt works``.actual = ``getDOTRequiredDOTAt works``.expected |> log
 
 HR()
 
-module ``getRequiredAt returns Error if non object in path`` =
+
+module ``getDOTRequiredDOTAt returns Error if non object in path`` =
     open Thoth.Json
     let json = """{"user": "maxime"}""".Trim()
 
@@ -1252,10 +1389,441 @@ module ``getRequiredAt returns Error if non object in path`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getRequiredAt returns Error if non object in path``" |> log
-``getRequiredAt returns Error if non object in path``.actual |> log
+"module ``getDOTRequiredDOTAt returns Error if non object in path``" |> log
+``getDOTRequiredDOTAt returns Error if non object in path``.actual |> log
 
 HR()
 
 
-// line 1558
+module ``getDOTRequiredDOTAt returns Error if field missing`` =
+    open Thoth.Json
+    let json = """{ "user": {"name":"maxime", "age":25}}""".Trim()
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { fieldA = get.Required.At [ "user"; "firstname"] Decode.string }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getDOTRequiredDOTAt returns Error if field missing``" |> log
+``getDOTRequiredDOTAt returns Error if field missing``.actual |> log
+
+HR()
+
+module ``getDOTRequiredDOTAt returns Error if type is incorrect`` =
+    open Thoth.Json
+    let json = """{ "user": {"name":12, "age":25}}"""
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { fieldA = get.Required.At [ "user"; "name"] Decode.string}
+            )
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getDOTRequiredDOTAt returns Error if type is incorrect``" |> log
+``getDOTRequiredDOTAt returns Error if type is incorrect``.actual |> log
+
+HR()
+
+module ``getDOTOptionalDOTAt works`` =
+    open Thoth.Json
+    let json = """{ "user": { "name": "maxime", "age": 25 } }"""
+    let expected = Ok({optionalField = Some "maxime"})
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { optionalField = get.Optional.At ["user"; "name"] Decode.string}
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getDOTOptionalDOTAt works``" |> log
+``getDOTOptionalDOTAt works``.actual |> log
+
+HR()
+
+module ``getDOTOptionalDOTAt returns type error if non object in path`` =
+    open Thoth.Json
+    let json = """{ "user": "maxime" }"""
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { optionalField = get.Optional.At [ "user"; "name" ] Decode.string }
+            )
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getDOTOptionalDOTAt returns type error if non object in path``" |> log
+``getDOTOptionalDOTAt returns type error if non object in path``.actual |> log
+
+
+HR()
+
+module ``getDOTOptionalDOTAt returns None if field is missing`` =
+    open Thoth.Json
+    let json = """{ "user": { "name": "maxime", "age": 25 } }"""
+    let expected = Ok({optionalField = None})
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { optionalField = get.Optional.At ["user"; "firstname"] Decode.string }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getDOTOptionalDOTAt returns None if field is missing``" |> log
+``getDOTOptionalDOTAt returns None if field is missing``.actual |> log
+
+
+HR()
+
+
+module ``getDOTOptionalDOTAt returns Error if type is incorrect`` =
+    open Thoth.Json
+    let json = """{ "user": { "name": 12, "age": 25 } }"""
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { optionalField = get.Optional.At ["user"; "name"] Decode.string }
+            )
+    
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getDOTOptionalDOTAt returns Error if type is incorrect``" |> log
+``getDOTOptionalDOTAt returns Error if type is incorrect``.actual |> log
+
+HR()
+
+
+module ``complex object builder works`` =
+    open Thoth.Json
+    let json = """{ "id": 67, "email": "user@mail.com" }"""
+    //let expected = Ok(User.Create 67 "" "user@mail.com" 0)
+
+    let userDecoder =
+        Decode.object
+            (fun get ->
+                {
+                    Id = get.Required.Field "id" Decode.int
+                    Name = get.Optional.Field "name" Decode.string |> Option.defaultValue ""
+                    Email = get.Required.Field "email" Decode.string
+                    Followers = 0
+                }
+            )
+
+    let actual = 
+        Decode.fromString userDecoder json
+
+"module ``complex object builder works``" |> log
+``complex object builder works``.actual |> log
+
+HR()
+
+
+// line 1699
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1699
+
+(**
+https://github.com/MangelMaxime/Thoth/issues/51
+Compose the object decoder with a custom decoder.
+*)
+
+
+module ``getDOTFieldDOTRaw works`` =
+    open Thoth.Json
+
+    type Shape =
+        | Circle of radius: int
+        | Rectangle of width: int * height: int
+
+        static member DecoderCircle =
+            Decode.field "radius" Decode.int
+            |> Decode.map Circle
+
+        static member DecoderRectangle =
+            Decode.tuple2
+                (Decode.field "width" Decode.int)
+                (Decode.field "height" Decode.int)
+            |> Decode.map Rectangle
+
+    type MyObj =
+        { Enabled: bool; Shape: Shape }
+
+    let json =
+        """{
+    "enabled": true,
+    "shape": "circle",
+    "radius": 20
+        }""".Trim()
+
+
+    // We first need to detect the shape without moving further in the path.
+    // By using, `field` we can stay at the same position in the decoded object.
+    // We check a field in the JSON without moving the cursor position.
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen 
+            (function
+            | "circle" -> 
+                Shape.DecoderCircle
+            | "rectangle" ->
+                Shape.DecoderRectangle
+            | shape ->
+                Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+    
+    // get.Required.Raw is basically a custom decoder.
+    // It is like Decode.oneOf but here, if you have an invalid type, you get an error telling you the type isn't valid.
+    // It basically allows you to compose the object decoder with a custom decoder.
+    // This allows you to decode JSON without an obligatory field.
+    let decoder = 
+        Decode.object 
+            (fun get ->
+                { 
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    // Allow use of custom sub-decoder via get.Require.Raw decoder
+                    Shape = get.Required.Raw shapeDecoder
+                } : MyObj
+            )
+
+    let actual =
+        Decode.fromString decoder json
+    
+    let expected =
+        Ok ({Enabled = true; Shape = Circle 20} : MyObj)
+
+"module ``getDOTFieldDOTRaw works``" |> log
+``getDOTFieldDOTRaw works``.actual |> log
+
+
+HR()
+
+
+module ``getFieldRaw returns Error if a decoder fails`` =
+    open Thoth.Json
+    let json = 
+        """{
+"enabled": true,
+"shape": "custom_shape",
+"radius": 20
+        }""".Trim()
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        // Decode.andThen does not really "decode", but just allows flow-continuation
+        |> Decode.andThen 
+            (function
+                | "circle" -> 
+                    Shape.DecoderCircle
+                | "rectangle" ->
+                    Shape.DecoderRectangle
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+
+    let decoder =
+        Decode.object
+            (fun get ->
+                { 
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    Shape = get.Required.Raw shapeDecoder
+                } : MyObj
+            )
+    
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getFieldRaw returns Error if a decoder fails``" |> log
+``getFieldRaw returns Error if a decoder fails``.actual |> log
+
+
+HR()
+
+
+// line 1768
+module ``getFieldRaw returns Error if a field is missing in the raw decoder`` =
+    open Thoth.Json
+    let json = 
+        """{
+"enabled": true,
+"shape": "circle",
+"radiusTypo": 2000
+        }""".Trim()
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen 
+            (function
+                | "circle" ->
+                    Shape.DecoderCircle // raw decoder
+                | "rectangle" ->
+                    Shape.DecoderRectangle // raw decoder
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+
+    let decoder =
+        Decode.object 
+            (fun get ->
+                { 
+                    Enabled = get.Required.Field "enabled" Decode.bool 
+                    Shape = get.Required.Raw shapeDecoder
+                } : MyObj
+            )
+    
+    let actual =
+        Decode.fromString decoder json
+
+"module ``getFieldRaw returns Error if a field is missing in the raw decoder``" |> log
+``getFieldRaw returns Error if a field is missing in the raw decoder``.actual |> log
+
+HR()
+
+
+module ``getOptionalRaw works`` =
+    open Thoth.Json
+
+    let json = 
+        """{
+"enabled": true,
+"shape": "circle",
+"radius": 20
+        }""".Trim()
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen 
+            (function
+                | "circle" ->
+                    Shape.DecoderCircle
+                | "rectangle" ->
+                    Shape.DecoderRectangle
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+    
+    let decoder =
+        Decode.object
+            (fun get ->
+                { 
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    // This optional refers to the raw JSON data
+                    Shape = get.Optional.Raw shapeDecoder
+                }
+            )
+
+    let actual =
+        Decode.fromString decoder json
+    
+    let expected =
+        Ok {
+            Enabled = true
+            Shape = Some (Circle 20)
+        }
+
+"module ``getOptionalRaw works``" |> log
+``getOptionalRaw works``.actual |> log
+
+HR()
+
+
+// line 1835
+// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1835
+
+
+module ``getOptionalRaw returns None if a field is missing`` =
+    open Thoth.Json
+
+    // missing field `radius` for custom raw-decoder Shape.DecoderCircle
+    let json = 
+        """{
+            "enabled": true,
+    	    "shape": "circle"
+        }""".Trim()
+
+    let shapeDecoder =
+        Decode.field "shape" Decode.string
+        |> Decode.andThen
+            (function
+                | "circle" -> 
+                    Shape.DecoderCircle
+                | "rectangle" ->
+                    Shape.DecoderRectangle
+                | shape ->
+                    Decode.fail (sprintf "Unknown shape type %s" shape)
+            )
+    
+    let decoder =
+        Decode.object
+            (fun get ->
+                {
+                    Enabled = get.Required.Field "enabled" Decode.bool
+                    Shape = get.Optional.Raw shapeDecoder
+                }
+            )
+    
+    let actual = 
+        Decode.fromString decoder json
+
+    let expected =
+        Ok { Enabled = true; Shape = None }
+
+"``getOptionalRaw returns None if a field is missing``" |> log
+``getOptionalRaw returns None if a field is missing``.actual |> log
+
+
+HR()
+
+
+// line 1867
+module ``getOptionalRaw returns an Error if a decoder fail`` =
+    open Thoth.Json
+    1
+
+
+HR()
+
+
+// 1898
+module ``getOptionalRaw returns an Error if the type is invalid`` =
+    open Thoth.Json
+    1
+
+
+HR()
+
+
+// 1930
+module ``getOptionalRaw returns None if a decoder fails with null`` =
+    open Thoth.Json
+    1
+
+
+HR()
+
+
+// 1962
+module ``Object builders returns all the Errors`` =
+    open Thoth.Json
+    1
+
+
+HR()
+
+
+////////////////////
+// 2014 AUTO TESTS
+
+

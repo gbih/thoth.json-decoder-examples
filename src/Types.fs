@@ -175,6 +175,8 @@ type RecordWithRequiredClass =
       Must : string }
 
 
+
+
 type Shape =
     | Circle of radius: int
     | Rectangle of width: int * height: int
@@ -189,9 +191,11 @@ type Shape =
             (Decode.field "height" Decode.int)
         |> Decode.map Rectangle
 
+
 type MyObj =
     { Enabled: bool
       Shape: Shape }
+
 
 type MyObj2 =
     { Enabled: bool
