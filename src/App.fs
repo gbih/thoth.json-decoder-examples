@@ -1,4 +1,4 @@
-module ThothEncoderExamples
+module ThothDecoderExamples
 open Tests.Types
 
 (**
