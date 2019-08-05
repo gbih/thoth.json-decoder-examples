@@ -1,10 +1,12 @@
-module ThothExamples
+module ThothEncoderExamples
 open Tests.Types
 
 (**
-This library is based on the Elm JSON decoder/encoder libraries.
-See them for more documentation:
+This library is based on the Elm JSON decoder/encoder libraries:
 
+https://guide.elm-lang.org/effects/json.html
+http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Decode
+https://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/latest
 *)
 
 (**
