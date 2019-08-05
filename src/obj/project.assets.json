@@ -576,17 +576,17 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj",
+      "projectUniqueName": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-DECODER/src/App.fsproj",
       "projectName": "App",
-      "projectPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/App.fsproj",
+      "projectPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-DECODER/src/App.fsproj",
       "packagesPath": "/Users/ih/.nuget/packages/",
-      "outputPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/src/obj/",
+      "outputPath": "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-DECODER/src/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-examples/NuGet.Config",
+        "/Users/ih/Desktop/F#-FABLE-ALL/03-THOTH/05-fable3.0-JSON-Thoth-DECODER/NuGet.Config",
         "/Users/ih/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [

@@ -1,24 +1,22 @@
 module ThothExamples
 open Tests.Types
+
 (**
-### From Tests to Working Code
-* Read the official tests and understand them
-* Since the tests should be exhaustive, work-through / identify the range of possible cases
-* Adapt useful examples into usable code-snippets
-* Base your code upon the tests, referencing the naming, etc. 
+This library is based on the Elm JSON decoder/encoder libraries.
+See them for more documentation:
+
 *)
 
-// open Fable.Core.JsInterop // !^
-
 (**
+Note for module names:
 http://fsharp.org/specs/language-spec/3.0/FSharpSpec-3.0-final.pdf
-Any sequence of characters that is enclosed in double-backtick marks (``   ``), excluding newlines,tabs , and double-back tick pairs themselves, is treated as an identifier. Note that when an identifier is used for the name of a type, union type case, module, or namespace, the following characters are not allowed even inside double-backtick marks:
-
+Any sequence of characters that is enclosed in double-backtick marks (``   ``), 
+excluding newlines,tabs , and double-back tick pairs themselves, is treated as 
+an identifier. Note that when an identifier is used for the name of a type, 
+union type case, module, or namespace, the following characters are not allowed 
+even inside double-backtick marks:
 ‘.', '+', '$', '&', '[', ']', '/', '\\', '*', '\"', '`'
 *)
-
-
-//-------------------------------
 
 module Print =
     open Fable.Core
@@ -28,26 +26,31 @@ module Print =
 
     let elementId = "elmish-app"
     let elem = Browser.Dom.document.getElementById(elementId)
-    elem.setAttribute("style", "color:black; margin:1rem; display: block;font-family: monospace;white-space: pre-wrap;"; )
+    elem.setAttribute("style", "color:black; margin:1rem; display: block;font-family: monospace;font-size:1.1rem;white-space: pre-wrap;"; )
     
     let p input =
         let x = input
-        //let showElement = Browser.Dom.document.createElement("li")
         let showElement = Browser.Dom.document.createElement("span")
-        // showElement.innerHTML <- sprintf "%A\n- - - - - - - - - - - - - - - - - - -" x
         showElement.innerHTML <- sprintf "%A\n" x
         Browser.Dom.document.getElementById(elementId).appendChild showElement |> ignore
 
-    let s input =
-        let x = JSONStringify input
-        //let showElement = Browser.Dom.document.createElement("li")
+    let title input =
+        let x = input
         let showElement = Browser.Dom.document.createElement("span")
-        // showElement.innerHTML <- sprintf "%A\n- - - - - - - - - - - - - - - - - - -" x
+        showElement.setAttribute("style", "margin-bottom:1rem;font-style:italic;color:blue"; )
+        showElement.innerHTML <- sprintf "%A\n" x
+        Browser.Dom.document.getElementById(elementId).appendChild showElement |> ignore
+
+    let json input =
+        let x = input
+        let showElement = Browser.Dom.document.createElement("span")
+        showElement.setAttribute("style", "margin-bottom:1rem;font-style:italic;color:green"; )
         showElement.innerHTML <- sprintf "%A\n" x
         Browser.Dom.document.getElementById(elementId).appendChild showElement |> ignore
 
 let log = Print.p
-let logStringify = Print.s
+let logtitle = Print.title
+let logjson = Print.json
 
 let HR () = "- - - - - - - - - - - - - - - - - - -" |> log
 let SECTION() = "= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =" |> log 
@@ -83,11 +86,13 @@ let jsonRecordInvalid =
          "g": "invalid_a_field",
          "h": "invalid_a_field" }"""
 
-//---------------------
+//-------------------------------
+// Primitives
+//-------------------------------
 
 SECTION()
 
-"Primitives" |> log
+"Primitives" |> logtitle
 
 SECTION()
 
@@ -96,9 +101,11 @@ module ``a string works`` =
     let expected = Ok("maxime") 
     let actual =
         Decode.fromString Decode.string "\"maxime\""
+
+"module ``a string works``" |> logtitle
 ``a string works``.actual |> sprintf "a string works\n%A" |> log
 
-// style 1
+"after pattern matching on Ok Error" |> logtitle
 ``a string works``.actual |>
     function
     | Ok values -> values |> log
@@ -111,9 +118,11 @@ module ``a float works`` =
     let expected = Ok(1.2)
     let actual =
         Decode.fromString Decode.float "1.2"
+
+"module ``a float works``" |> logtitle
 ``a float works``.actual |> sprintf "a float works\n%A" |> log
 
-// style 2
+"after pattern matching on Ok Error" |> logtitle
 let a = ``a float works``.actual
 match a with
 | Ok values -> values |> log
@@ -126,6 +135,8 @@ module ``a float from int works`` =
     let expected = Ok 1.0
     let actual =
         Decode.fromString  Decode.float "1.0"
+
+"module ``a float from int works``" |> logtitle
 ``a float from int works``.actual |> sprintf "a float from int works\n%A" |> log
 
 ``a float from int works``.actual |>
@@ -141,6 +152,7 @@ module ``a bool works`` =
     let actual =
         Decode.fromString Decode.bool "true"
 
+"module ``a bool works``" |> logtitle
 ``a bool works``.actual |> log
 
 ``a bool works``.actual 
@@ -156,6 +168,7 @@ module ``an int works`` =
     let actual = 
         Decode.fromString Decode.int "25"
 
+"module ``an int works``" |> logtitle
 ``an int works``.actual |> log
 
 ``an int works``.actual |> 
@@ -165,13 +178,13 @@ function
 
 HR ()
 
-
 module ``an int64 works from number`` =
     open Thoth.Json
     let expected = Ok 1000L
     let actual =
         Decode.fromString Decode.int64 "1000"
 
+"module ``an int64 works from number``" |> logtitle
 ``an int64 works from number``.actual |> log
 ``an int64 works from number``.actual |>
 function
@@ -186,6 +199,7 @@ module ``an int64 works from a string`` =
     let actual =
         Decode.fromString Decode.int64 "\"99\""
 
+"module ``an int64 works from a string``" |> logtitle
 ``an int64 works from a string``.actual |> log  
 ``an int64 works from a string``.actual |>
 function
@@ -199,6 +213,8 @@ module ``an uint32 works from number`` =
     let expected = Ok 1000u
     let actual = 
         Decode.fromString Decode.uint32 "1000"
+
+"module ``an uint32 works from number``" |> logtitle
 ``an uint32 works from number``.actual |> log
 ``an uint32 works from number``.actual |>
 function
@@ -213,6 +229,7 @@ module ``an uint32 works from a string`` =
     let actual =
         Decode.fromString Decode.uint32 "\"1000\""
 
+"module ``an uint32 works from a string``" |> logtitle
 ``an uint32 works from a string``.actual |> log
 
 HR ()
@@ -223,6 +240,7 @@ module ``a string representing a DateTime should be accepted as a string`` =
     let actual = 
         Decode.fromString Decode.string "\"2018-10-01T11:12:55.00Z\""
 
+"module ``a string representing a DateTime should be accepted as a string``" |> logtitle
 ``a string representing a DateTime should be accepted as a string``.actual |> log
 
 HR ()
@@ -234,6 +252,7 @@ module ``a datetime works`` =
     let actual =
         Decode.fromString Decode.datetime "\"2018-10-01T11:12:55.00Z\""
 
+"module ``a datetime works``" |> logtitle
 ``a datetime works``.actual |> log
 
 HR ()
@@ -248,7 +267,8 @@ module ``a datetime works with TimeZone`` =
     let actual =
         Decode.fromString Decode.datetime json
 
-    localDate.ToUniversalTime() |> log
+"module ``a datetime works with TimeZone``" |> logtitle
+``a datetime works with TimeZone``.localDate.ToUniversalTime() |> log
 
 HR ()
 
@@ -260,6 +280,7 @@ module ``a datetimeOffset works`` =
     let actual =
         Decode.fromString Decode.datetimeOffset json
 
+"module ``a datetimeOffset works``" |> logtitle
 ``a datetimeOffset works``.actual |> log
 
 HR ()
@@ -273,7 +294,12 @@ module ``a timespan works`` =
     let actual =
         Decode.fromString Decode.timespan json
 
+"module ``a timespan works``" |> logtitle
 ``a timespan works``.actual |> log
+
+//-------------------------------
+// Tuples
+//-------------------------------
 
 SECTION()
 
@@ -287,6 +313,8 @@ module ``tuple2 works`` =
     let expected = Ok(1, "maxime")
     let actual = 
         Decode.fromString (Decode.tuple2 Decode.int Decode.string) json
+
+"module ``tuple2 works``" |> logtitle
 ``tuple2 works``.actual |> log
 
 ``tuple2 works``.actual |>
@@ -307,6 +335,8 @@ module ``tuple3 works`` =
                 Decode.string
                 Decode.float
             ) json
+
+"module ``tuple3 works``" |> logtitle
 ``tuple3 works``.actual |> log
 
 // style 1
@@ -327,11 +357,11 @@ function
 | Error err -> failwith err |> log
 
 
-//----------
+// To-do: Continue for tuple3 .. tuple8
 
-// Continue for tuple3 .. tuple8
-
-//----------
+//-------------------------------
+// Object Primitives
+//-------------------------------
 
 SECTION()
 
@@ -348,6 +378,7 @@ module ``field works`` =
     let actual2 =
         Decode.fromString (Decode.field "height" Decode.int) json
 
+"module ``field works``" |> logtitle
 ``field works``.actual |> log
 ``field works``.actual = ``field works``.expected |> log
 
@@ -364,11 +395,16 @@ module ``index works`` =
     let actual =
         Decode.fromString (Decode.index 2 Decode.string) json
 
+"module ``index works``" |> logtitle
 ``index works``.actual |> log
 ``index works``.actual = ``index works``.expected |> log
 match ``index works``.actual with
 | Ok values -> values |> log
 | Error err -> failwith err |> log
+
+//-------------------------------
+// Data strucure: List
+//-------------------------------
 
 SECTION()
 
@@ -382,6 +418,7 @@ module ``list works`` =
     let actual =
         Decode.fromString (Decode.list Decode.int) "[1, 2, 3]"
 
+"module ``list works``" |> logtitle
 ``list works``.actual |> log
 ``list works``.actual = ``list works``.expected |> log
 match ``list works``.actual with
@@ -403,6 +440,7 @@ module ``nested lists work`` =
         |> Encode.toString 4
         |> Decode.fromString (Decode.list (Decode.list Decode.string))
 
+"module ``nested lists work``" |> logtitle
 ``nested lists work``.actual |> log
 ``nested lists work``.actual = ``nested lists work``.expected |> log
 
@@ -424,6 +462,7 @@ module ``nested lists work and case handling`` =
         | Ok v -> v
         | Error err -> failwith err
 
+"module ``nested lists work and case handling``" |> logtitle
 ``nested lists work and case handling``.actual |> log
 
 HR()
@@ -439,6 +478,7 @@ module ``nested lists work 1D-A`` =
             |> Encode.toString 0
         )
 
+"module ``nested lists work 1D-A``" |> logtitle
 ``nested lists work 1D-A``.actual |> sprintf "1D Encoding:\n%A" |> log
 
 HR()
@@ -455,10 +495,10 @@ module ``nested lists work 2D-1`` =
             |> Encode.list
             |> Encode.toString 4
 
+"module ``nested lists work 2D-1``" |> logtitle
 ``nested lists work 2D-1``.actual |> sprintf "2D Encoding:\n%A" |> log
 
 HR()
-
 
 
 // 1-D list, another variation for encoding
@@ -470,6 +510,7 @@ module ``nested lists work 1D-B`` =
             [ Encode.string "maxime"]
         |> Encode.toString 4
 
+"``nested lists work 1D-B``" |> logtitle
 ``nested lists work 1D-B``.actual |> sprintf "1D Encoding:\n%A" |> log
 
 // HOW TO TO DO 3D LIST ????
@@ -479,7 +520,6 @@ SECTION()
 "Data structure: Array" |> log
 
 SECTION()
-
 
 module ``array works`` =
     open Thoth.Json
@@ -493,6 +533,7 @@ module ``array works`` =
     let actual = 
         Decode.fromString (Decode.array Decode.int) "[1, 2, 3]"
 
+"module ``array works``" |> logtitle
 ``array works``.actual |> log
 ``array works``.actual = ``array works``.expected |> log
 ``array works``.actual 
@@ -500,6 +541,9 @@ module ``array works`` =
 | Ok values -> values |> log
 | Error err -> failwith err |> log
 
+//-------------------------------
+// Data structure: keyValue Pairs
+//-------------------------------
 
 SECTION()
 
@@ -513,7 +557,7 @@ module ``keyValuePairs works`` =
     let actual =
         Decode.fromString (Decode.keyValuePairs Decode.int) """{ "a":1, "b":2, "c":3}"""
 
-
+"module ``keyValuePairs works``" |> logtitle
 ``keyValuePairs works``.actual |> log
 ``keyValuePairs works``.actual = ``keyValuePairs works``.expected |> log
 ``keyValuePairs works``.actual
@@ -521,6 +565,9 @@ module ``keyValuePairs works`` =
 | Ok values -> values |> log
 | Error err -> failwith err |> log
 
+//-------------------------------
+// Data strucure: dict
+//-------------------------------
 
 SECTION()
 
@@ -528,13 +575,13 @@ SECTION()
 
 SECTION()
 
-
 module ``dict works`` =
     open Thoth.Json
     let expected : Result<Map<string,int>,string> = Ok(Map.ofList([("a",1); ("b", 2); ("c", 3)]))
     let actual = 
         Decode.fromString (Decode.dict Decode.int) """{ "a": 1, "b": 2, "c": 3 }"""
 
+"module ``dict works``" |> logtitle
 ``dict works``.actual |> log
 ``dict works``.actual = ``dict works``.expected |> log
 
@@ -586,7 +633,7 @@ module ``dict with custom decoder works`` =
 }
             """
 
-
+"module ``dict with custom decoder works``" |> logtitle
 ``dict with custom decoder works``.actual |> log
 ``dict with custom decoder works``.actual  = ``dict with custom decoder works``.expected |> log
 
@@ -595,6 +642,9 @@ module ``dict with custom decoder works`` =
 | Ok values -> values |> log
 | Error err -> failwith err |> log
 
+//-------------------------------
+// Inconsistent data structure
+//-------------------------------
 
 SECTION()
 
@@ -612,6 +662,7 @@ module ``oneOf works`` =
     let actual =
         Decode.fromString (Decode.list badInt) "[1,2,null,4]"
 
+"``oneOf works``" |> logtitle
 ``oneOf works``.expected |> sprintf "expected: %A" |> log
 ``oneOf works``.actual |> log
 ``oneOf works``.actual = ``oneOf works``.expected |> log
@@ -620,7 +671,6 @@ module ``oneOf works`` =
 |> function
 | Ok values -> values |> log
 | Error err -> failwith err |> log
-
 
 HR()
 
@@ -642,9 +692,9 @@ module ``oneOf works in combination with object builders`` =
     let actual = 
         Decode.fromString decoder2 json
 
+"``oneOf works in combination with object builders``" |> logtitle
 ``oneOf works in combination with object builders``.json |> log
 ``oneOf works in combination with object builders``.actual |> log
-//``oneOf works in combination with object builders``.expected = ``oneOf works in combination with object builders``.expected |> log
 
 ``oneOf works in combination with object builders``.expected
 |> function
@@ -653,45 +703,22 @@ module ``oneOf works in combination with object builders`` =
 
 
 (**
-### Choice type:
+The definition of the Choice type is as follows:
 
-https://fsharpforfunandprofit.com/posts/railway-oriented-programming-carbonated/
-
-The definition of the Choice type is as follows
-
- type Choice<'a, 'b> =
-      | Choice1Of2 of 'a
-      | Choice2Of2 of 'b
-
-
-Good question! In the original post (see http://fsharpforfunandprofi... ) and talk (http://fsharpforfunandprofi... ) I DO use a special discriminated union.
-
-Some people suggested that I should use a Choice so as to be compatible with other F# code (such as async -- https://msdn.microsoft.com/... ) so I thought that in this post I'd show how to be compatible with Choice using active patterns.
-
-
+type Choice<'a, 'b> =
+    | Choice1Of2 of 'a
+    | Choice2Of2 of 'b
 
 https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.choice%5B't1%2C't2%5D-union-%5Bfsharp%5D
 Core.Choice<'T1,'T2> Union (F#)
 Helper types for active patterns with two choices.
 
-Syntax
-[<StructuralEquality>]
-[<StructuralComparison>]
-type Choice<'T1,'T2> =
-| Choice1Of2 of 'T1
-| Choice2Of2 of 'T2
-with
-interface IStructuralEquatable
-interface IComparable
-interface IComparable
-interface IStructuralComparable
-end
-
+Example:
 https://gist.github.com/viswaug/f6b3ec4df66f55b1d037
 
 *)
-HR()
 
+HR()
 
 module ``oneOf works with optional`` =
     open Thoth.Json
@@ -706,7 +733,7 @@ module ``oneOf works with optional`` =
                 Decode.field "Normal" Decode.float |> Decode.map Normal
                 Decode.field "Reduced" (Decode.option Decode.float) |> Decode.map Reduced
                 Decode.field "Zero" Decode.bool |> Decode.map (fun _ -> Zero)
-             ]
+            ]
     let actual1 = 
         """{"Normal": 4.5}""" |> Decode.fromString decoder
     let actual2 =
@@ -716,7 +743,7 @@ module ``oneOf works with optional`` =
     let actual4 =
         """{"Zero": true}""" |> Decode.fromString decoder 
 
-
+"module ``oneOf works with optional``" |> logtitle
 ``oneOf works with optional``.actual1 |> log
 ``oneOf works with optional``.actual1 = ``oneOf works with optional``.expected1 |> log
 
@@ -729,10 +756,8 @@ module ``oneOf works with optional`` =
 ``oneOf works with optional``.actual4 |> log
 ``oneOf works with optional``.actual4 = ``oneOf works with optional``.expected4 |> log
 
-
 HR()
 
-// line 890
 module ``oneOf output errors if all case fails`` =
     open Thoth.Json
     let badInt =
@@ -740,11 +765,10 @@ module ``oneOf output errors if all case fails`` =
     let actual =
         Decode.fromString (Decode.list badInt) "[1,2,null,4]"
 
+"module ``oneOf output errors if all case fails``" |> logtitle
 ``oneOf output errors if all case fails``.actual |> log
 
-
 HR()
-
 
 module ``optional works`` =
     open Thoth.Json
@@ -754,9 +778,10 @@ module ``optional works`` =
     let actualValid =
         Decode.fromString (Decode.optional "name" Decode.string) json
 
+    "module ``optional works``" |> logtitle
+
     actualValid |> log
     expectedValid = actualValid |> log
-
 
     match Decode.fromString (Decode.optional "name" Decode.int) json with
     | Error _ -> ()
@@ -777,11 +802,8 @@ module ``optional works`` =
     actualUndefinedField |> log
     expectedUndefinedField = actualUndefinedField |> log
 
-//------------
 
 HR()
-
-// stop at testCase "optionalAt works" line 951
 
 module ``optionalAt works`` =
     open Thoth.Json
@@ -804,6 +826,7 @@ module ``optionalAt works`` =
     let actualUndefinedField =
         Decode.fromString (Decode.optionalAt ["data"; "something_undefined"] Decode.string) json
 
+"module ``optionalAt works``" |> logtitle
 ``optionalAt works``.actualValid |> log
 ``optionalAt works``.actualMissingField |> log
 ``optionalAt works``.actualUndefinedField |> log
@@ -818,11 +841,14 @@ module ``combining field and option decoders works`` =
     let actualValid =
         Decode.fromString (Decode.field "name" (Decode.option Decode.string)) json
 
+"module ``combining field and option decoders works``" |> logtitle
 ``combining field and option decoders works``.actualValid |> log
 
-SECTION()
+//-------------------------------
+// Fancy decoding
+//-------------------------------
 
-// line 1094
+SECTION()
 
 "Fancy decoding" |> log
 
@@ -834,6 +860,7 @@ module ``null works (test on an int)`` =
     let actual =
         Decode.fromString (Decode.nil 20) "null"
 
+"module ``null works (test on an int)``" |> logtitle
 ``null works (test on an int)``.actual |> log
 ``null works (test on an int)``.actual = ``null works (test on an int)``.expected |> log
 
@@ -850,6 +877,7 @@ module ``null works (test on a boolean)`` =
     let actual =
         Decode.fromString (Decode.nil false) "null"
 
+"module ``null works (test on a boolean)``" |> logtitle
 ``null works (test on a boolean)``.actual |> log
 
 // explicit style with lamba and match with
@@ -874,6 +902,7 @@ module ``succeed works`` =
     let actual =
         Decode.fromString (Decode.succeed 70) "true"
 
+"module ``succeed works``" |> logtitle
 ``succeed works``.actual |> log
 
 HR()
@@ -885,8 +914,8 @@ module ``succeed output an error if the JSON is invalid`` =
     let actual =
         Decode.fromString (Decode.succeed 7) "maxime"
 
+"``succeed output an error if the JSON is invalid``" |> logtitle
 ``succeed output an error if the JSON is invalid``.actual |> log
-//``succeed output an error if the JSON is invalid``.actual = ``succeed output an error if the JSON is invalid``.expected |> log
 
 HR()
 
@@ -897,6 +926,7 @@ module ``fail works`` =
     let actual : Result<obj, string> =
         Decode.fromString (Decode.fail msg) "true"
 
+"module ``fail works``" |> logtitle
 ``fail works``.actual |> log
 ``fail works``.actual = ``fail works``.expected |> log
 
@@ -922,6 +952,7 @@ module ``andThen works`` =
     let actual =
         Decode.fromString info """{ "version": 3, "data": 2 }"""
 
+"module ``andThen works``" |> logtitle
 ``andThen works``.actual |> log
 
 HR()
@@ -955,8 +986,12 @@ Expecting an object with a field named `version` but instead got:
     let actual =
         Decode.fromString info """{ "info": 3, "data": 2 }"""
     
-
+"module ``andThen generate an error if an error occurred``" |> logtitle
 ``andThen generate an error if an error occurred``.actual |> log
+
+//-------------------------------
+// Mapping
+//-------------------------------
 
 SECTION()
 
@@ -964,10 +999,8 @@ SECTION()
 
 SECTION()
 
-// up to line 1188
-
 (**
-### Map functions
+Map functions:
 
 To get data from several fields and convert them into a record you will 
 need to use the map functions like map2, map3, ..., map8
@@ -986,7 +1019,7 @@ module ``map example`` =
 
     let actual = Decode.fromString Point.Decoder """{"x": 10} """
 
-"module ``map example``" |> log
+"module ``map example``" |> logtitle
 ``map example``.actual |> log
 
 HR()
@@ -1005,12 +1038,10 @@ module ``map2 example`` =
 
     let actual = Decode.fromString Point.Decoder """{"x": 10, "y": "George"}"""
 
-"module ``map2 example``" |> log
+"module ``map2 example``" |> logtitle
 ``map2 example``.actual |> log
 
 HR()
-
-
 
 module ``map works`` =
     open Thoth.Json
@@ -1025,7 +1056,7 @@ module ``map works`` =
     let actual =
         Decode.fromString stringLength "\"maxime\""
 
-"module ``map works`" |> log
+"module ``map works`" |> logtitle
 ``map works``.actual |> log
 
 HR()
@@ -1043,12 +1074,14 @@ module ``map2 works`` =
     let actual =
         Decode.fromString decodePoint jsonRecord
 
-"module ``map2 works``" |> log
+"module ``map2 works``" |> logtitle
 ``map2 works``.actual |> log
 
+// To-do: Finish examples for map3..map8
 
-
-// skip map3..map8
+//-------------------------------
+// object builder
+//-------------------------------
 
 SECTION()
 
@@ -1070,6 +1103,7 @@ module ``get Required Field works`` =
     let actual = 
         Decode.fromString decoder json
 
+"module ``get Required Field works``" |> logtitle
 ``get Required Field works``.actual |> log
 
 HR()
@@ -1087,6 +1121,7 @@ module ``get Required Field returns Error if field is missing`` =
     let actual = 
         Decode.fromString decoder json
 
+"module ``get Required Field returns Error if field is missing``" |> logtitle
 ``get Required Field returns Error if field is missing``.actual |> log
 ``get Required Field returns Error if field is missing``.json |> log
 ``get Required Field returns Error if field is missing``.jsonWithoutTrim |> log
@@ -1106,7 +1141,7 @@ module ``getRequiredField returns Error if type is incorrect`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getRequiredField returns Error if type is incorrect``" |> log
+"module ``getRequiredField returns Error if type is incorrect``" |> logtitle
 ``getRequiredField returns Error if type is incorrect``.actual |> log
 
 HR()
@@ -1126,6 +1161,7 @@ module ``getOptionalField works`` =
     let actual = 
         Decode.fromString decoder json
 
+"module ``getOptionalField works``" |> logtitle
 ``getOptionalField works``.actual |> log
 
 HR()
@@ -1143,7 +1179,7 @@ module ``getOptionalField returns None value if field is missing`` =
     let actual = 
         Decode.fromString decoder json
 
-"module ``getOptionalField returns None value if field is missing``" |> log
+"module ``getOptionalField returns None value if field is missing``" |> logtitle
 ``getOptionalField returns None value if field is missing``.actual |> log
 ``getOptionalField returns None value if field is missing``.actual = ``getOptionalField returns None value if field is missing``.expected |> log
 
@@ -1162,7 +1198,7 @@ module ``getOptionalField returns None if field is null`` =
     let actual = 
         Decode.fromString decoder json
 
-"module ``getOptionalField returns None if field is null``" |> log
+"module ``getOptionalField returns None if field is null``" |> logtitle
 ``getOptionalField returns None if field is null``.actual |> log
 
 HR()
@@ -1180,7 +1216,7 @@ module ``getOptionalField returns Error value if decoder fails`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getOptionalField returns Error value if decoder fails``" |> log
+"module ``getOptionalField returns Error value if decoder fails``" |> logtitle
 ``getOptionalField returns Error value if decoder fails``.actual |> log
 
 HR()
@@ -1213,7 +1249,7 @@ module ``nested getOptionalField greaterthan getRequiredField returns None if fi
     let actual =
         Decode.fromString decoder json
 
-"module ``nested getOptionalField greaterthan getRequiredField returns None if field is null``" |> log
+"module ``nested getOptionalField greaterthan getRequiredField returns None if field is null``" |> logtitle
 ``nested getOptionalField greaterthan getRequiredField returns None if field is null``.actual |> log
 
 module ``getOptionalField returns Error if type is incorrect`` =
@@ -1229,130 +1265,10 @@ module ``getOptionalField returns Error if type is incorrect`` =
     let actual =
         Decode.fromString decoder json
 
-
-"module ``getOptionalField returns Error if type is incorrect``" |> log
+"module ``getOptionalField returns Error if type is incorrect``" |> logtitle
 ``getOptionalField returns Error if type is incorrect``.actual |> log
 
-
 HR()
-
-
-// get.Required.At, line 1521. This is an object primitive
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1521
-// `at` originally defined here:
-// https://github.com/thoth-org/Thoth.Json/blob/master/src/Decode.fs#L324
-
-// Example to work through get.Required.At
-
-(**
-alfonsogarciacaro/fable-repl.css
-https://gist.github.com/alfonsogarciacaro/f15cd60eef96da4f9cd5924fef21ecc7
-https://randomuser.me/api/
-
-Minimum for a useful POC
-* Thoth.Json (serialize/deserialize)
-* Fable.Fetch (make Http requests)
-* Fable-React and Fable-Elmish
-
-Possibly nice to have
-* FSharp Data (pull data from website in typed-form, able to create your own "API")
-* Giraffe (using FSharp Data)
-
-*)
-module ``ThothRandomUser example`` =
-    open System
-    open Thoth.Json
-    open Fetch
-
-    (**
-    We use get.Required.At to access Json in this parent-child structure:
-    ```
-    "name": {
-        "title": "miss",
-        "first": "lilou",
-        "last": "roux"
-    }
-    ```
-    To access and decode name.first, we use this syntax:
-        `get.Required.At ["name"; "first"] Decode.string`
-    *)
-
-
-    // Model
-    type Gender =
-        | Male
-        | Female
-
-        static member Decoder =
-            Decode.string
-            |> Decode.andThen(
-                function
-                | "male" -> Decode.succeed Male
-                | "female" -> Decode.succeed Female
-                | invalid -> "`" + invalid + "` isn't a valid value for Gender" |> Decode.fail
-            )
-    
-    type User =
-        {
-            Gender : Gender
-            FullName : string
-            Email : string
-            CellPhone : string
-            OfficePhone : string
-            Age : int
-            Birthday : DateTime
-            Picture : string
-        }
-
-        static member Decoder =
-            Decode.object (fun get ->
-                let firstname = get.Required.At ["name"; "first"] Decode.string
-                let lastname = get.Required.At ["name"; "last"] Decode.string
-
-                { 
-                    Gender = get.Required.Field "gender" Gender.Decoder
-                    FullName = firstname + " " + lastname
-                    Email = get.Required.Field "email" Decode.string
-                    CellPhone = get.Required.Field "cell" Decode.string
-                    OfficePhone = get.Required.Field "phone" Decode.string
-                    // Inside a record, `dob` is a JSON field returned from the server
-                    Age = get.Required.At ["dob"; "age"] Decode.int
-                    Birthday = get.Required.At ["dob"; "date"] Decode.datetime
-                    Picture = get.Required.At ["picture"; "large"] Decode.string
-                }
-            )
-    
-    type UserList = 
-        { userList : User list }
-        static member Decoder =
-            Decode.list User.Decoder
-
-    let getRandomUser () = promise {
-        let! response = Fetch.fetch "https://randomuser.me/api/" []
-        let! responseText = response.text()
-
-        "- - - - - - - - - - - - - - - - - - -" |> log
-        "``ThothRandomUser example``" |> log
-        "RAW RESPONSE:" |> log
-        responseText |> log
-
-        let resultDecoder = 
-            Decode.field "results" (Decode.index 0 User.Decoder)
-        
-        return Decode.fromString resultDecoder responseText
-    }
-
-
-// ``ThothRandomUser example``.getRandomUser() 
-// |> Promise.map (fun txt ->
-//     txt
-//     |> sprintf "\nPARSED RESPONSE, VIA PROMISE.MAP:\n%A"
-//     |> log
-//     ) |> ignore
-
-
-HR()
-
 
 module ``getDOTRequiredDOTAt works`` =
     open Thoth.Json
@@ -1370,12 +1286,11 @@ module ``getDOTRequiredDOTAt works`` =
     let actual = 
         Decode.fromString decoder json
 
-"module ``getDOTRequiredDOTAt works``" |> log
+"module ``getDOTRequiredDOTAt works``" |> logtitle
 ``getDOTRequiredDOTAt works``.actual |> log
 ``getDOTRequiredDOTAt works``.actual = ``getDOTRequiredDOTAt works``.expected |> log
 
 HR()
-
 
 module ``getDOTRequiredDOTAt returns Error if non object in path`` =
     open Thoth.Json
@@ -1389,11 +1304,10 @@ module ``getDOTRequiredDOTAt returns Error if non object in path`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTRequiredDOTAt returns Error if non object in path``" |> log
+"module ``getDOTRequiredDOTAt returns Error if non object in path``" |> logtitle
 ``getDOTRequiredDOTAt returns Error if non object in path``.actual |> log
 
 HR()
-
 
 module ``getDOTRequiredDOTAt returns Error if field missing`` =
     open Thoth.Json
@@ -1408,7 +1322,7 @@ module ``getDOTRequiredDOTAt returns Error if field missing`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTRequiredDOTAt returns Error if field missing``" |> log
+"module ``getDOTRequiredDOTAt returns Error if field missing``" |> logtitle
 ``getDOTRequiredDOTAt returns Error if field missing``.actual |> log
 
 HR()
@@ -1425,7 +1339,7 @@ module ``getDOTRequiredDOTAt returns Error if type is incorrect`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTRequiredDOTAt returns Error if type is incorrect``" |> log
+"module ``getDOTRequiredDOTAt returns Error if type is incorrect``" |> logtitle
 ``getDOTRequiredDOTAt returns Error if type is incorrect``.actual |> log
 
 HR()
@@ -1444,7 +1358,7 @@ module ``getDOTOptionalDOTAt works`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTOptionalDOTAt works``" |> log
+"module ``getDOTOptionalDOTAt works``" |> logtitle
 ``getDOTOptionalDOTAt works``.actual |> log
 
 HR()
@@ -1461,9 +1375,8 @@ module ``getDOTOptionalDOTAt returns type error if non object in path`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTOptionalDOTAt returns type error if non object in path``" |> log
+"module ``getDOTOptionalDOTAt returns type error if non object in path``" |> logtitle
 ``getDOTOptionalDOTAt returns type error if non object in path``.actual |> log
-
 
 HR()
 
@@ -1481,12 +1394,10 @@ module ``getDOTOptionalDOTAt returns None if field is missing`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTOptionalDOTAt returns None if field is missing``" |> log
+"module ``getDOTOptionalDOTAt returns None if field is missing``" |> logtitle
 ``getDOTOptionalDOTAt returns None if field is missing``.actual |> log
 
-
 HR()
-
 
 module ``getDOTOptionalDOTAt returns Error if type is incorrect`` =
     open Thoth.Json
@@ -1501,17 +1412,14 @@ module ``getDOTOptionalDOTAt returns Error if type is incorrect`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getDOTOptionalDOTAt returns Error if type is incorrect``" |> log
+"module ``getDOTOptionalDOTAt returns Error if type is incorrect``" |> logtitle
 ``getDOTOptionalDOTAt returns Error if type is incorrect``.actual |> log
 
 HR()
 
-
 module ``complex object builder works`` =
     open Thoth.Json
     let json = """{ "id": 67, "email": "user@mail.com" }"""
-    //let expected = Ok(User.Create 67 "" "user@mail.com" 0)
-
     let userDecoder =
         Decode.object
             (fun get ->
@@ -1526,22 +1434,17 @@ module ``complex object builder works`` =
     let actual = 
         Decode.fromString userDecoder json
 
-"module ``complex object builder works``" |> log
+"module ``complex object builder works``" |> logtitle
 ``complex object builder works``.actual |> log
 
 HR()
-
-
-// line 1699
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1699
 
 (**
 https://github.com/MangelMaxime/Thoth/issues/51
 Compose the object decoder with a custom decoder.
 *)
 
-
-module ``getDOTFieldDOTRaw works`` =
+module ``get Field Raw works`` =
     open Thoth.Json
 
     type Shape =
@@ -1568,10 +1471,8 @@ module ``getDOTFieldDOTRaw works`` =
     "radius": 20
         }""".Trim()
 
-
     // We first need to detect the shape without moving further in the path.
     // By using, `field` we can stay at the same position in the decoded object.
-    // We check a field in the JSON without moving the cursor position.
     let shapeDecoder =
         Decode.field "shape" Decode.string
         |> Decode.andThen 
@@ -1604,14 +1505,12 @@ module ``getDOTFieldDOTRaw works`` =
     let expected =
         Ok ({Enabled = true; Shape = Circle 20} : MyObj)
 
-"module ``getDOTFieldDOTRaw works``" |> log
-``getDOTFieldDOTRaw works``.actual |> log
-
+"module ``get Field Raw works``" |> logtitle
+``get Field Raw works``.actual |> log
 
 HR()
 
-
-module ``getFieldRaw returns Error if a decoder fails`` =
+module ``get Field Raw returns Error if a decoder fails`` =
     open Thoth.Json
     let json = 
         """{
@@ -1645,15 +1544,12 @@ module ``getFieldRaw returns Error if a decoder fails`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getFieldRaw returns Error if a decoder fails``" |> log
-``getFieldRaw returns Error if a decoder fails``.actual |> log
-
+"module ``get Field Raw returns Error if a decoder fails``" |> logtitle
+``get Field Raw returns Error if a decoder fails``.actual |> log
 
 HR()
 
-
-// line 1768
-module ``getFieldRaw returns Error if a field is missing in the raw decoder`` =
+module ``get Field Raw returns Error if a field is missing in the raw decoder`` =
     open Thoth.Json
     let json = 
         """{
@@ -1686,11 +1582,10 @@ module ``getFieldRaw returns Error if a field is missing in the raw decoder`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getFieldRaw returns Error if a field is missing in the raw decoder``" |> log
-``getFieldRaw returns Error if a field is missing in the raw decoder``.actual |> log
+"module ``get Field Raw returns Error if a field is missing in the raw decoder``" |> logtitle
+``get Field Raw returns Error if a field is missing in the raw decoder``.actual |> log
 
 HR()
-
 
 module ``getOptionalRaw works`` =
     open Thoth.Json
@@ -1738,11 +1633,6 @@ module ``getOptionalRaw works`` =
 
 HR()
 
-
-// line 1835
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1835
-
-
 module ``getOptionalRaw returns None if a field is missing`` =
     open Thoth.Json
 
@@ -1780,15 +1670,11 @@ module ``getOptionalRaw returns None if a field is missing`` =
     let expected =
         Ok { Enabled = true; Shape = None }
 
-"``getOptionalRaw returns None if a field is missing``" |> log
+"``getOptionalRaw returns None if a field is missing``" |> logtitle
 ``getOptionalRaw returns None if a field is missing``.actual |> log
-
 
 HR()
 
-
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1867
-// line 1867
 module ``getOptionalRaw returns an Error if a decoder fail`` =
     open Thoth.Json
     let json =
@@ -1823,15 +1709,11 @@ module ``getOptionalRaw returns an Error if a decoder fail`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getOptionalRaw returns an Error if a decoder fail``" |> log
+"module ``getOptionalRaw returns an Error if a decoder fail``" |> logtitle
 ``getOptionalRaw returns an Error if a decoder fail``.actual |> log
-
 
 HR()
 
-
-// 1898
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1898
 module ``getOptionalRaw returns an Error if the type is invalid`` =
     open Thoth.Json
     let json =
@@ -1867,15 +1749,11 @@ module ``getOptionalRaw returns an Error if the type is invalid`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getOptionalRaw returns an Error if the type is invalid``" |> log
+"module ``getOptionalRaw returns an Error if the type is invalid``" |> logtitle
 ``getOptionalRaw returns an Error if the type is invalid``.actual |> log
-
 
 HR()
 
-
-// 1930
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1930
 module ``getOptionalRaw returns None if a decoder fails with null`` =
     open Thoth.Json
     let json =
@@ -1910,15 +1788,11 @@ module ``getOptionalRaw returns None if a decoder fails with null`` =
     let actual =
         Decode.fromString decoder json
 
-"module ``getOptionalRaw returns None if a decoder fails with null``" |> log
+"module ``getOptionalRaw returns None if a decoder fails with null``" |> logtitle
 ``getOptionalRaw returns None if a decoder fails with null``.actual |> log
-
 
 HR()
 
-
-// 1962
-// https://github.com/thoth-org/Thoth.Json/blob/master/tests/Decoders.fs#L1962
 module ``Object builders returns all the Errors`` =
     open Thoth.Json
     let json = 
@@ -1946,15 +1820,20 @@ module ``Object builders returns all the Errors`` =
     let actual = 
         Decode.fromString decode json
 
-"module ``Object builders returns all the Errors``" |> log
+"module ``Object builders returns all the Errors``" |> logtitle
 ``Object builders returns all the Errors``.actual |> log
-
 
 HR()
 
+//-------------------------------
+// Auto Encoding and Decoding
+//-------------------------------
 
-////////////////////
-// 2014 AUTO TESTS
+SECTION()
+
+"Auto Encoding and Decoding" |> log
+
+SECTION()
 
 module ``AutoDecodefromString works`` =
     open Thoth.Json
@@ -1973,7 +1852,7 @@ module ``AutoDecodefromString works`` =
     let json = Encode.Auto.toString(4, value)
     let actual = Decode.Auto.unsafeFromString<Record9>(json)
 
-"module ``AutoDecodefromString works``" |> log
+"module ``AutoDecodefromString works``" |> logtitle
 ``AutoDecodefromString works``.json |> log
 ``AutoDecodefromString works``.actual |> log
 
@@ -1990,9 +1869,8 @@ module ``Auto serialization works with recursive types`` =
     let json = Encode.Auto.toString(4, li)
     let actual = Decode.Auto.unsafeFromString<MyList<int>>(json)
 
-"module ``Auto serialization works with recursive types``" |> log
+"module ``Auto serialization works with recursive types``" |> logtitle
 ``Auto serialization works with recursive types``.actual |> log
-
 
 HR()
 
@@ -2002,7 +1880,605 @@ module ``Auto decoders work for string`` =
     let json = Encode.Auto.toString(4, value)
     let actual = Decode.Auto.unsafeFromString<string> json
 
-"module ``Auto decoders work for string``" |> log
+"module ``Auto decoders work for string``" |> logtitle
 ``Auto decoders work for string``.actual |> log
 
-// 2065
+HR()
+
+module ``Auto decoders work for guid`` =
+    open Thoth.Json
+    open System
+    let value = Guid.NewGuid()
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<Guid>(json)
+
+"module ``Auto decoders work for guid``" |> logtitle
+``Auto decoders work for guid``.json |> log
+``Auto decoders work for guid``.actual |> log
+
+HR()
+
+module ``Audo decoders work for int`` =
+    open Thoth.Json
+    let value = 12
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<int>(json)
+
+"module ``Audo decoders work for int``" |> logtitle
+``Audo decoders work for int``.json |> log
+``Audo decoders work for int``.actual |> log
+
+HR()
+
+module ``Auto decoders work for int64`` =
+    open Thoth.Json
+    let extra = Extra.empty |> Extra.withInt64
+    let value = 9999999999L
+    let json = Encode.Auto.toString(4, value, extra=extra)
+    let actual = Decode.Auto.unsafeFromString<int64>(json, extra=extra)
+
+"module ``Auto decoders work for int64``" |> logtitle
+``Auto decoders work for int64``.json |> log
+``Auto decoders work for int64``.actual |> log
+
+HR()
+
+module ``Auto decoders work for uint32`` =
+    open Thoth.Json
+    let value = 12u
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<uint32>(json)
+
+"module ``Auto decoders work for uint32``" |> logtitle
+``Auto decoders work for uint32``.json |> log
+``Auto decoders work for uint32``.actual |> log
+
+HR()
+
+module ``Auto decoders with for uint64`` =
+    open Thoth.Json
+    let extra = Extra.empty |> Extra.withUInt64
+    let value = 9999999999999999999UL
+    let json = Encode.Auto.toString(4, value, extra=extra)
+    let actual = Decode.Auto.unsafeFromString<uint64>(json, extra=extra)
+
+"module ``Auto decoders with for uint64``" |> logtitle
+``Auto decoders with for uint64``.json |> log
+``Auto decoders with for uint64``.actual |> log
+
+HR()
+
+module ``Auto decoders works for bigint`` =
+    open Thoth.Json
+    let extra = Extra.empty |> Extra.withBigInt
+    let value = 99999999999999999999999I
+    let json = Encode.Auto.toString(4, value, extra=extra)
+    let actual = Decode.Auto.unsafeFromString<bigint>(json, extra=extra)
+
+"module ``Auto decoders works for bigint``" |> logtitle
+``Auto decoders works for bigint``.json |> log
+``Auto decoders works for bigint``.actual |> log
+
+HR()
+
+module ``Auto decoders works for bool`` =
+    open Thoth.Json
+    let value = false
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<bool>(json)
+
+"module ``Auto decoders works for bool``" |> logtitle
+``Auto decoders works for bool``.json |> log
+``Auto decoders works for bool``.actual |> log
+
+HR()
+
+module ``Auto decoders works for float`` =
+    open Thoth.Json
+    let value = 12.
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<float>(json)
+
+"module ``Auto decoders works for float``" |> logtitle
+``Auto decoders works for float``.json |> log
+``Auto decoders works for float``.actual |> log
+
+HR()
+
+module ``Auto decoders works for decimal`` =
+    open Thoth.Json
+    let extra = Extra.empty |> Extra.withDecimal
+    let value = 0.7833M
+    let json = Encode.Auto.toString(4, value, extra=extra)
+    let actual = Decode.Auto.unsafeFromString<decimal>(json, extra=extra)
+
+"module ``Auto decoders works for decimal``" |> logtitle
+``Auto decoders works for decimal``.json |> log
+``Auto decoders works for decimal``.actual |> log
+
+HR()
+
+// This test is commented out in the source code -- why?
+module ``Auto decoders works for datetime`` =
+    open Thoth.Json
+    open System
+    let value = DateTime.Now
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<DateTime>(json)
+
+"module ``Auto decoders works for datetime``" |> logtitle
+``Auto decoders works for datetime``.json |> log
+``Auto decoders works for datetime``.actual |> log
+
+HR()
+
+module ``Auto decoders works for datetime UTC`` =
+    open Thoth.Json
+    open System
+    let value = DateTime.UtcNow
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<DateTime>(json)
+
+"module ``Auto decoders works for datetime UTC``" |> logtitle
+``Auto decoders works for datetime UTC``.json |> log
+``Auto decoders works for datetime UTC``.actual |> log
+
+HR()
+
+module ``Auto decoders work for datetimeOffset`` =
+    open Thoth.Json
+    open System
+    let value = DateTimeOffset.Now
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<DateTime>(json).ToLocalTime()
+
+"module ``Auto decoders work for datetimeOffset``" |> logtitle
+``Auto decoders work for datetimeOffset``.json |> log
+``Auto decoders work for datetimeOffset``.actual |> log
+
+``Auto decoders work for datetimeOffset``.actual.Date |> log
+``Auto decoders work for datetimeOffset``.actual.Year |> log
+``Auto decoders work for datetimeOffset``.actual.Month |> log
+``Auto decoders work for datetimeOffset``.actual.Day|> log
+``Auto decoders work for datetimeOffset``.actual.Hour |> log
+``Auto decoders work for datetimeOffset``.actual.Minute |> log
+``Auto decoders work for datetimeOffset``.actual.Second |> log
+``Auto decoders work for datetimeOffset``.actual.Millisecond |> log
+
+HR()
+
+module ``Auto decoders works for datetimeOffset UTC`` =
+    open Thoth.Json
+    open System
+    let value = DateTimeOffset.UtcNow
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<DateTimeOffset>(json).ToUniversalTime()
+    
+"module ``Auto decoders works for datetimeOffset UTC``" |> logtitle
+``Auto decoders works for datetimeOffset UTC``.json |> log
+``Auto decoders works for datetimeOffset UTC``.actual |> log
+
+HR()
+
+module ``Auto decoders works for TimeSpan`` =
+    open Thoth.Json
+    open System
+    let value = TimeSpan(1, 2, 3, 4, 5)
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<TimeSpan>(json)
+
+"module ``Auto decoders works for TimeSpan``" |> logtitle
+``Auto decoders works for TimeSpan``.json |> log
+``Auto decoders works for TimeSpan``.actual |> log
+``Auto decoders works for TimeSpan``.actual.Days |> log
+``Auto decoders works for TimeSpan``.actual.Hours |> log
+``Auto decoders works for TimeSpan``.actual.Minutes |> log
+``Auto decoders works for TimeSpan``.actual.Seconds |> log
+``Auto decoders works for TimeSpan``.actual.Milliseconds |> log
+
+HR()
+
+module ``Auto decoders works for list`` =
+    open Thoth.Json
+    let value = [1; 2; 3; 4]
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<int list>(json)
+
+"module ``Auto decoders works for list``" |> logtitle
+``Auto decoders works for list``.json |> log
+``Auto decoders works for list``.actual |> log
+
+HR()
+
+module ``Auto decoders works for array`` =
+    open Thoth.Json
+    let value = [| 1; 2; 3; 4; |]
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<int array>(json)
+
+"module ``Auto decoders works for array``" |> logtitle
+``Auto decoders works for array``.json |> log
+``Auto decoders works for array``.actual |> log
+
+HR()
+
+module ``Auto decoders works for option None`` =
+    open Thoth.Json
+    let value = None
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<int option>(json)
+
+"module ``Auto decoders works for option None``" |> logtitle
+``Auto decoders works for option None``.json |> log
+``Auto decoders works for option None``.actual |> log
+
+HR()
+
+module ``Auto decoders works for option Some`` =
+    open Thoth.Json
+    let value = Some "Middle Name"
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<string option>(json)
+
+"module ``Auto decoders works for option Some``" |> logtitle
+``Auto decoders works for option Some``.json |> log
+``Auto decoders works for option Some``.actual |> log
+
+HR()
+
+module ``Auto decoders works for null`` =
+    open Thoth.Json
+    let value = null
+    let json = Encode.Auto.toString(4, value)
+    let actual = Decode.Auto.unsafeFromString<obj>(json)
+
+"module ``Auto decoders works for null``" |> logtitle
+``Auto decoders works for null``.json |> log
+``Auto decoders works for null``.actual |> log
+
+HR()
+
+// This is not really that useful -- should always try to assign types
+module ``Auto decoders works even if type is determined by the compiler`` =
+    open Thoth.Json
+    open System
+    let value = ["1", "George", null, 1232.4]
+    let json = Encode.Auto.toString(4, value)
+    //let actual = Decode.Auto.unsafeFromString<_>(json) // not working anymore
+    Decode.Auto.unsafeFromString<_>(json) |> log
+
+"module ``Auto decoders works even if type is determined by the compiler``" |> logtitle
+``Auto decoders works even if type is determined by the compiler``.json |> log
+
+HR()
+
+module ``Auto unsafe FromString works with camelCase`` =
+    open Thoth.Json
+    let json = """{ "id" : 0, "name": "maxime", "email": "mail@domain.com", "followers": 0 }"""
+    let actual = Decode.Auto.unsafeFromString<User>(json, isCamelCase=true)
+    
+"``Auto unsafe FromString works with camelCase``" |> logtitle
+``Auto unsafe FromString works with camelCase``.json |> log
+``Auto unsafe FromString works with camelCase``.actual |> log
+
+HR()
+
+module ``Auto fromString works with camelCase`` =
+
+    type User001 =
+        { Id : int
+          Name : string
+          Email : string
+          Followers : int }
+
+    open Thoth.Json
+    let json = """{ "id" : 0, "name": "maxime", "email": "mail@domain.com", "followers": 0 }"""
+    let actual = Decode.Auto.fromString<User001>(json, isCamelCase=true)
+
+"module ``Auto fromString works with camelCase``" |> logtitle
+``Auto fromString works with camelCase``.json |> log
+``Auto fromString works with camelCase``.actual |> log
+
+HR()
+
+module ``Auto fromString works for records with an actual value for the optional field value`` =
+    open Thoth.Json
+    let json = """{ "maybe" : "maybe value", "must": "must value"}"""
+    let actual = Decode.Auto.fromString<TestMaybeRecord>(json, isCamelCase=true)
+
+"module ``Auto fromString works for records with an actual value for the optional field value``" |> logtitle
+``Auto fromString works for records with an actual value for the optional field value``.json |> log
+``Auto fromString works for records with an actual value for the optional field value``.actual |> log
+
+HR()
+
+module ``Auto fromString works for records with null for the optional field value`` =
+    open Thoth.Json
+    let json = """{ "maybe" : null, "must": "must value"}"""
+    let actual = Decode.Auto.fromString<TestMaybeRecord>(json, isCamelCase=true)
+
+"module ``Auto fromString works for records with null for the optional field value``" |> logtitle
+``Auto fromString works for records with null for the optional field value``.json |> logjson
+``Auto fromString works for records with null for the optional field value``.actual |> log
+
+HR()
+
+module ``Auto fromString works for records missing optional field value on classes`` =
+    open Thoth.Json
+    let json = """{ "must": "must value" }"""
+    let actual = Decode.Auto.fromString<RecordWithOptionalClass>(json, isCamelCase=true)
+
+"module ``Auto fromString works for records missing optional field value on classes``" |> logtitle
+``Auto fromString works for records missing optional field value on classes``.json |> logjson
+``Auto fromString works for records missing optional field value on classes``.actual |> log
+
+HR()
+
+module ``Auto generateDecoder throws for field using a non optional class`` =
+    open Thoth.Json
+
+    let actual =
+        try
+            let decoder = Decode.Auto.generateDecoder<RecordWithRequiredClass>(isCamelCase=true) 
+            ""
+        with ex ->
+            ex.Message
+
+"module ``Auto generateDecoder throws for field using a non optional class``" |> logtitle
+``Auto generateDecoder throws for field using a non optional class``.actual |> log
+
+HR()
+
+module ``Auto fromString works for Class marked as optional`` =
+    open Thoth.Json
+    let json = """null"""
+    let actual = Decode.Auto.fromString<BaseClass option>(json, isCamelCase=true)
+
+"module ``Auto fromString works for Class marked as optional``" |> logtitle
+``Auto fromString works for Class marked as optional``.json |> logjson
+``Auto fromString works for Class marked as optional``.actual |> log
+
+HR()
+
+module ``Auto generateDecoder throws for Class`` =
+    open Thoth.Json
+    let actual =
+        try
+            let decoder = Decode.Auto.generateDecoder<BaseClass>(isCamelCase=true)
+            ""
+        with ex ->
+            ex.Message
+
+"module ``Auto generateDecoder throws for Class``" |> logtitle
+``Auto generateDecoder throws for Class``.actual |> log
+
+HR()
+
+module ``Auto fromString works for records missing an optional field`` =
+    open Thoth.Json
+    let json = """{ "must": "must value"}"""
+    let actual = Decode.Auto.fromString<TestMaybeRecord>(json, isCamelCase=true)
+
+"module ``Auto fromString works for records missing an optional field``" |> logtitle
+``Auto fromString works for records missing an optional field``.json |> logjson
+``Auto fromString works for records missing an optional field``.actual |> log
+
+HR()
+
+module ``Auto fromString works with maps encoded as objects`` =
+    open Thoth.Json
+    let json = """{"ah":{"a":-1.5,"b":0},"oh":{"a":2,"b":2}}"""
+    let actual = Decode.Auto.fromString<obj>(json)
+
+"module ``Auto fromString works with maps encoded as objects``" |> logtitle
+``Auto fromString works with maps encoded as objects``.json |> logjson
+``Auto fromString works with maps encoded as objects``.actual |> log
+
+HR()
+
+module ``Auto fromString works with maps encoded as arrays`` =
+    open Thoth.Json
+    let json = """[[{"a":-1.5,"b":0},"ah"],[{"a":2,"b":2},"oh"]]"""
+    let actual = Decode.Auto.fromString<obj>(json)
+
+"module ``Auto fromString works with maps encoded as arrays``" |> logtitle
+``Auto fromString works with maps encoded as arrays``.json |> logjson
+``Auto fromString works with maps encoded as arrays``.actual |> log
+
+HR()
+
+module ``Decoder Auto toString works with bigint extra`` =
+    open Thoth.Json
+
+    type BigIntRecord = { bigintField: bigint }
+
+    let extra = Extra.empty |> Extra.withBigInt
+    // Note: passing a record with bigint, not just a bigint 
+    let value = { bigintField = 9999999999999999999999I }
+    let json = Encode.Auto.toString(0, value, extra=extra)
+    let actual = Decode.Auto.fromString<BigIntRecord>(json, extra=extra)
+    
+"module ``Decoder Auto toString works with bigint extra``" |> logtitle
+``Decoder Auto toString works with bigint extra``.json |> logjson
+``Decoder Auto toString works with bigint extra``.actual |> log
+
+HR()
+
+module ``Decoder Auto toString works with custom extra and raw Json`` =
+    open Thoth.Json
+    let extra = Extra.empty |> Extra.withCustom ChildType.Encode ChildType.Decoder
+    let json = """{"ParentField":"bumbabon"}"""
+    let actual = Decode.Auto.fromString<ParentRecord>(json, extra=extra)
+
+"module ``Decoder Auto toString works with custom extra and raw Json``" |> logtitle
+``Decoder Auto toString works with custom extra and raw Json``.json |> logjson
+``Decoder Auto toString works with custom extra and raw Json``.actual |> log
+
+HR()
+
+module ``Decoder Auto toString works with custom extra and constructed Json`` =
+    open Thoth.Json
+    let extra = Extra.empty |> Extra.withCustom ChildType.Encode ChildType.Decoder
+    let value = { ParentField = { ChildField = "bumbabon" } }
+    let json = Encode.Auto.toString(0, value, extra=extra)
+    let actual = Decode.Auto.fromString<ParentRecord>(json, extra=extra)
+
+"module ``Decoder Auto toString works with custom extra and constructed Json``" |> logtitle
+``Decoder Auto toString works with custom extra and constructed Json``.json |> logjson
+``Decoder Auto toString works with custom extra and constructed Json``.actual |> log
+
+HR()
+
+type RecordWithPrivateConstructor = private { Foo1: int; Foo2: float }
+
+module ``Auto fromString works with records with private constructors`` =
+    open Thoth.Json
+    let json = """{ "foo1": 5, "foo2": 7.8 }"""
+    let actual = Decode.Auto.fromString<RecordWithPrivateConstructor>(json, isCamelCase=true)
+
+"module ``Auto fromString works with records with private constructors``" |> logtitle
+``Auto fromString works with records with private constructors``.json |> logjson
+``Auto fromString works with records with private constructors``.actual |> log
+
+HR()
+
+type UnionWithPrivateConstructor = private Bar of string | Baz
+
+module ``Auto fromString works with unions with private construcors`` =
+    open Thoth.Json
+    let json = """[ "Baz", ["Bar", "foo"]]"""
+    let actual = Decode.Auto.fromString<UnionWithPrivateConstructor list>(json, isCamelCase=true)
+
+"``Auto fromString works with unions with private construcors``" |> logtitle
+``Auto fromString works with unions with private construcors``.json |> logjson
+``Auto fromString works with unions with private construcors``.actual |> log
+
+HR()
+
+module ``Auto generateDecoderCached works`` =
+    open Thoth.Json
+    let json = """{ "id" : 0, "name": "maxime", "email": "mail@domain.com", "followers": 0 }"""
+    let decoder1 = Decode.Auto.generateDecoderCached<User>(isCamelCase=true)
+    let decoder2 = Decode.Auto.generateDecoderCached<User>(isCamelCase=true)
+    let actual1 = Decode.fromString decoder1 json
+    let actual2 = Decode.fromString decoder2 json
+
+"module ``Auto generateDecoderCached works``" |> logtitle
+``Auto generateDecoderCached works``.json |> logjson
+``Auto generateDecoderCached works``.actual1 |> log
+``Auto generateDecoderCached works``.actual2 |> log
+
+HR()
+
+module ``Auto fromString works with strange types if they are None`` =
+    open Thoth.Json
+    let json = """{ "Id":0 }"""
+    let actual = Decode.Auto.fromString<RecordWithStrangeType>(json)
+
+"module ``Auto fromString works with strange types if they are None``" |> logtitle
+``Auto fromString works with strange types if they are None``.json |> logjson
+``Auto fromString works with strange types if they are None``.actual |> log
+
+//-------------------------------
+// Misc examples
+//-------------------------------
+
+SECTION()
+
+"Misc examples" |> log
+
+SECTION()
+
+(**
+Example of get.Required.At and Fetch
+alfonsogarciacaro/fable-repl.css
+https://gist.github.com/alfonsogarciacaro/f15cd60eef96da4f9cd5924fef21ecc7
+https://randomuser.me/api/
+
+*)
+module ``ThothRandomUser example`` =
+    open System
+    open Thoth.Json
+
+    (**
+    We use get.Required.At to access Json in this parent-child structure:
+    ```
+    "name": {
+        "title": "miss",
+        "first": "lilou",
+        "last": "roux"
+    }
+    ```
+    To access and decode name.first, we use this syntax:
+        `get.Required.At ["name"; "first"] Decode.string`
+    *)
+
+    type Gender =
+        | Male
+        | Female
+
+        static member Decoder =
+            Decode.string
+            |> Decode.andThen(
+                function
+                | "male" -> Decode.succeed Male
+                | "female" -> Decode.succeed Female
+                | invalid -> "`" + invalid + "` isn't a valid value for Gender" |> Decode.fail
+            )
+    
+    type User =
+        {
+            Gender : Gender
+            FullName : string
+            Email : string
+            CellPhone : string
+            OfficePhone : string
+            Age : int
+            Birthday : DateTime
+            Picture : string
+        }
+
+        static member Decoder =
+            Decode.object (fun get ->
+                let firstname = get.Required.At ["name"; "first"] Decode.string
+                let lastname = get.Required.At ["name"; "last"] Decode.string
+
+                { 
+                    Gender = get.Required.Field "gender" Gender.Decoder
+                    FullName = firstname + " " + lastname
+                    Email = get.Required.Field "email" Decode.string
+                    CellPhone = get.Required.Field "cell" Decode.string
+                    OfficePhone = get.Required.Field "phone" Decode.string
+                    // Here `dob` is a JSON field returned from the server
+                    Age = get.Required.At ["dob"; "age"] Decode.int
+                    Birthday = get.Required.At ["dob"; "date"] Decode.datetime
+                    Picture = get.Required.At ["picture"; "large"] Decode.string
+                }
+            )
+    
+    type UserList = 
+        { userList : User list }
+        static member Decoder =
+            Decode.list User.Decoder
+
+    let getRandomUser () = promise {
+        let! response = Fetch.fetch "https://randomuser.me/api/" []
+        let! responseText = response.text()
+
+        "Raw JSON response:" |> logtitle
+        responseText |> logjson
+
+        let resultDecoder = 
+            Decode.field "results" (Decode.index 0 User.Decoder)
+        
+        return Decode.fromString resultDecoder responseText
+    }
+
+"ThothRandomUser example" |> logtitle
+
+``ThothRandomUser example``.getRandomUser() 
+|> Promise.map (fun txt ->    
+    txt
+    |> sprintf "\nParsed Json response, accessed via Promise.Map:\n%A"
+    |> log
+    ) |> ignore
