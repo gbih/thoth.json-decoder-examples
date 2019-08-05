@@ -70,34 +70,6 @@
           "lib/netstandard2.0/Fable.Core.dll": {}
         }
       },
-      "Fable.Elmish/3.0.0": {
-        "type": "package",
-        "dependencies": {
-          "FSharp.Core": "4.6.2",
-          "Fable.Core": "3.0.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Fable.Elmish.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Fable.Elmish.dll": {}
-        }
-      },
-      "Fable.Elmish.React/3.0.1": {
-        "type": "package",
-        "dependencies": {
-          "FSharp.Core": "4.6.2",
-          "Fable.Core": "3.0.0",
-          "Fable.Elmish": "3.0.0",
-          "Fable.React": "5.1.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Fable.Elmish.React.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Fable.Elmish.React.dll": {}
-        }
-      },
       "Fable.Fetch/2.0.0": {
         "type": "package",
         "dependencies": {
@@ -124,20 +96,6 @@
         },
         "runtime": {
           "lib/netstandard2.0/Fable.Promise.dll": {}
-        }
-      },
-      "Fable.React/5.1.0": {
-        "type": "package",
-        "dependencies": {
-          "FSharp.Core": "4.6.2",
-          "Fable.Browser.Dom": "1.0.0",
-          "Fable.Core": "3.0.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Fable.React.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Fable.React.dll": {}
         }
       },
       "FSharp.Core/4.6.2": {
@@ -208,15 +166,6 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Newtonsoft.Json/11.0.2": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
-        }
-      },
       "Thoth.Json/3.3.0": {
         "type": "package",
         "dependencies": {
@@ -228,20 +177,6 @@
         },
         "runtime": {
           "lib/netstandard2.0/Thoth.Json.dll": {}
-        }
-      },
-      "Thoth.Json.Net/3.5.1": {
-        "type": "package",
-        "dependencies": {
-          "FSharp.Core": "4.6.2",
-          "Fable.Core": "[3.0.0, 4.0.0)",
-          "Newtonsoft.Json": "11.0.2"
-        },
-        "compile": {
-          "lib/netstandard2.0/Thoth.Json.Net.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Thoth.Json.Net.dll": {}
         }
       }
     }
@@ -317,43 +252,6 @@
         "paket-installmodel.cache"
       ]
     },
-    "Fable.Elmish/3.0.0": {
-      "sha512": "nmMTykzFTT6Jukh12d/3WGYiUpOdJodD2gUOiVIJAjKGg9ejgPj7k17xA/tvfauKEH5S28ZKdI9furmaFakpTg==",
-      "type": "package",
-      "path": "fable.elmish/3.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "fable.elmish.3.0.0.nupkg.sha512",
-        "fable.elmish.nuspec",
-        "fable/Fable.Elmish.fsproj",
-        "fable/cmd.fs",
-        "fable/prelude.fs",
-        "fable/program.fs",
-        "fable/ring.fs",
-        "lib/netstandard2.0/Fable.Elmish.dll",
-        "lib/netstandard2.0/Fable.Elmish.xml",
-        "paket-installmodel.cache"
-      ]
-    },
-    "Fable.Elmish.React/3.0.1": {
-      "sha512": "4VG0iY/Qdz0DR1G9VkwsYY+iDcLMnTUYV0h8LoJluvgfoHUe1BFcyK+C01MU5e15SZzHtRMdTbNcEeG3kPBcrQ==",
-      "type": "package",
-      "path": "fable.elmish.react/3.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "fable.elmish.react.3.0.1.nupkg.sha512",
-        "fable.elmish.react.nuspec",
-        "fable/Fable.Elmish.React.fsproj",
-        "fable/common.fs",
-        "fable/react-native.fs",
-        "fable/react.fs",
-        "lib/netstandard2.0/Fable.Elmish.React.dll",
-        "lib/netstandard2.0/Fable.Elmish.React.xml",
-        "paket-installmodel.cache"
-      ]
-    },
     "Fable.Fetch/2.0.0": {
       "sha512": "aXsM2dUpCRIhYx8t9JCTcJcqJ2mrVS6kywzn87Qbh5bP1TgpoA7L0ONHBM0M0iWFwzZu4oYvVuavQr1f4Wy66w==",
       "type": "package",
@@ -383,31 +281,6 @@
         "fable/PromiseImpl.fs",
         "lib/netstandard2.0/Fable.Promise.dll",
         "lib/netstandard2.0/Fable.Promise.xml"
-      ]
-    },
-    "Fable.React/5.1.0": {
-      "sha512": "00YrR93IeloD6ptcPxDCzNCYbiIXrVgUIDp7GWJMrBK+9ND5QCS353RoEL/HoCV6StUyDHXcQG9codnIakgVqg==",
-      "type": "package",
-      "path": "fable.react/5.1.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "fable.react.5.1.0.nupkg.sha512",
-        "fable.react.nuspec",
-        "fable/Fable.React.Extensions.fs",
-        "fable/Fable.React.FunctionComponent.fs",
-        "fable/Fable.React.Helpers.fs",
-        "fable/Fable.React.Hooks.fs",
-        "fable/Fable.React.Isomorphic.fs",
-        "fable/Fable.React.Props.fs",
-        "fable/Fable.React.ReactiveComponents.fs",
-        "fable/Fable.React.Standard.fs",
-        "fable/Fable.React.fs",
-        "fable/Fable.React.fsproj",
-        "fable/Fable.ReactDom.fs",
-        "fable/Fable.ReactServer.fs",
-        "lib/netstandard2.0/Fable.React.dll",
-        "lib/netstandard2.0/Fable.React.xml"
       ]
     },
     "FSharp.Core/4.6.2": {
@@ -489,37 +362,6 @@
         "version.txt"
       ]
     },
-    "Newtonsoft.Json/11.0.2": {
-      "sha512": "IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
-      "type": "package",
-      "path": "newtonsoft.json/11.0.2",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.md",
-        "lib/net20/Newtonsoft.Json.dll",
-        "lib/net20/Newtonsoft.Json.xml",
-        "lib/net35/Newtonsoft.Json.dll",
-        "lib/net35/Newtonsoft.Json.xml",
-        "lib/net40/Newtonsoft.Json.dll",
-        "lib/net40/Newtonsoft.Json.xml",
-        "lib/net45/Newtonsoft.Json.dll",
-        "lib/net45/Newtonsoft.Json.xml",
-        "lib/netstandard1.0/Newtonsoft.Json.dll",
-        "lib/netstandard1.0/Newtonsoft.Json.xml",
-        "lib/netstandard1.3/Newtonsoft.Json.dll",
-        "lib/netstandard1.3/Newtonsoft.Json.xml",
-        "lib/netstandard2.0/Newtonsoft.Json.dll",
-        "lib/netstandard2.0/Newtonsoft.Json.xml",
-        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
-        "newtonsoft.json.11.0.2.nupkg.sha512",
-        "newtonsoft.json.nuspec",
-        "paket-installmodel.cache"
-      ]
-    },
     "Thoth.Json/3.3.0": {
       "sha512": "dChq1mSRlvIIxmhKH9N0dvk5e9aBt0f+3rbGYbrEIpHNe3DcMrdlbftNmuMb7CcGlYCIW0DmVW2Fzn/fgtUSIg==",
       "type": "package",
@@ -539,34 +381,17 @@
         "thoth.json.3.3.0.nupkg.sha512",
         "thoth.json.nuspec"
       ]
-    },
-    "Thoth.Json.Net/3.5.1": {
-      "sha512": "52itsDG4y+csXPNfg00xk/sBNtvVZanAiYUlbXsOkwhJo0R54nXEj04eJAAbA7C6dEsg1Jl2ZHwj/d/zJwtTEg==",
-      "type": "package",
-      "path": "thoth.json.net/3.5.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net46/Thoth.Json.Net.dll",
-        "lib/net46/Thoth.Json.Net.xml",
-        "lib/netstandard2.0/Thoth.Json.Net.dll",
-        "lib/netstandard2.0/Thoth.Json.Net.xml",
-        "paket-installmodel.cache",
-        "thoth.json.net.3.5.1.nupkg.sha512",
-        "thoth.json.net.nuspec"
-      ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.0": [
       "FSharp.Core >= 4.6.2",
+      "Fable.Browser.Dom >= 1.0.0",
       "Fable.Core >= 3.0.0",
-      "Fable.Elmish.React >= 3.0.1",
       "Fable.Fetch >= 2.0.0",
       "Fable.Promise >= 2.0.0",
       "Microsoft.NETCore.App >= 3.0.0-preview7-27912-14",
-      "Thoth.Json >= 3.3.0",
-      "Thoth.Json.Net >= 3.5.1"
+      "Thoth.Json >= 3.3.0"
     ]
   },
   "packageFolders": {
@@ -608,13 +433,13 @@
             "target": "Package",
             "version": "[4.6.2, )"
           },
+          "Fable.Browser.Dom": {
+            "target": "Package",
+            "version": "[1.0.0, )"
+          },
           "Fable.Core": {
             "target": "Package",
             "version": "[3.0.0, )"
-          },
-          "Fable.Elmish.React": {
-            "target": "Package",
-            "version": "[3.0.1, )"
           },
           "Fable.Fetch": {
             "target": "Package",
@@ -634,10 +459,6 @@
           "Thoth.Json": {
             "target": "Package",
             "version": "[3.3.0, )"
-          },
-          "Thoth.Json.Net": {
-            "target": "Package",
-            "version": "[3.5.1, )"
           }
         },
         "imports": [

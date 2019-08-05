@@ -914,7 +914,7 @@ module ``succeed output an error if the JSON is invalid`` =
     let actual =
         Decode.fromString (Decode.succeed 7) "maxime"
 
-"``succeed output an error if the JSON is invalid``" |> logtitle
+"module ``succeed output an error if the JSON is invalid``" |> logtitle
 ``succeed output an error if the JSON is invalid``.actual |> log
 
 HR()
